@@ -255,7 +255,7 @@ Frontend runs on `http://localhost:5173`
         <sub><b>Aavani Pachauri</b></sub>
       </a>
       <br />
-      <sub>Security, Deployment & Documentation</sub>
+      <sub>Deployment & Documentation</sub>
       <br />
       <sub>📧 member3@example.com</sub>
     </td>
@@ -266,7 +266,7 @@ Frontend runs on `http://localhost:5173`
         <sub><b>Kanshika Verma</b></sub>
       </a>
       <br />
-      <sub>API Development & Testing </sub>
+      <sub>API Development , Security & Testing </sub>
       <br />
       <sub>📧 member4@example.com</sub>
     </td>
@@ -274,27 +274,6 @@ Frontend runs on `http://localhost:5173`
 </table>
 
 ---
-
-## 📋 Team Responsibilities
-
-### 👨‍💼 Pratyaksh Gupta (Team Lead)
-- **Responsibilities:** Project architecture, Backend API (ASP.NET Core), Database design, JWT auth, Code reviews
-- **Key Contributions:** `ReceiptController.cs`, `ExpenseController.cs`, `ApplicationDbContext.cs`, API documentation
-
-### 👨‍💻 Team Member 2 (Frontend Developer)
-- **Responsibilities:** React architecture, UI/UX design, Component development, State management, API integration
-- **Key Contributions:** `Dashboard.jsx`, `ReceiptUpload.jsx`, `AuthContext.jsx`, Tailwind CSS styling
-
-### 🤖 Team Member 3 (AI/ML Integration)
-- **Responsibilities:** Gemini API integration, OCR implementation, ML categorization, AI query processing
-- **Key Contributions:** `GeminiAIService.cs`, `OCRService.cs`, `CategorizationService.cs`, Prompt engineering
-
-### 🗄️ Team Member 4 (Database & DevOps)
-- **Responsibilities:** SQL Server setup, EF migrations, Firebase config, Docker, CI/CD, Cloud deployment
-- **Key Contributions:** Database schema, `FirebaseStorageService.cs`, Docker Compose, GitHub Actions workflow
-
----
-
 
 ## 🔮 Future Enhancements
 
