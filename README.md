@@ -5,15 +5,15 @@
 ### AI-Powered Receipt-Based Expense Tracker
 
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react)](https://reactjs.org/)
+[![React Native](https://img.shields.io/badge/React_Native-Expo-61DAFB?logo=react)](https://expo.dev/)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
-[![SQL Server](https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver)](https://www.microsoft.com/sql-server)
-[![Firebase](https://img.shields.io/badge/Firebase-10.x-FFCA28?logo=firebase)](https://firebase.google.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16.x-4169E1?logo=postgresql)](https://www.postgresql.org/)
 [![Gemini AI](https://img.shields.io/badge/Gemini_AI-Enabled-4285F4?logo=google)](https://ai.google.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**An intelligent expense management platform that digitizes receipts using OCR, automatically categorizes expenses, and provides AI-powered financial insights through natural language queries.**
+**A full-stack, multi-platform expense management system that digitizes receipts, categorizes expenses, tracks budgets, and provides AI-powered financial insights via natural language queries.**
 
-[Features](#-key-features) • [Getting Started](#-getting-started) • [Team](#-team) • [Documentation](#-documentation)
+[Overview](#-project-overview) • [Features](#-core-features) • [Architecture](#️-system-architecture) • [Tech Stack](#-final-technology-stack) • [API](#-api-endpoints) • [Getting Started](#-getting-started)
 
 </div>
 
@@ -21,120 +21,298 @@
 
 ## 📌 Project Overview
 
-**SmartSpend** is a full-stack expense tracking application built with **ASP.NET Core Web API** and **React** that combines receipt digitization with AI-powered financial analytics.
+**SmartSpend** is a full-stack, **multi-platform** expense tracking system:
 
-Unlike traditional expense apps that only scan receipts OR only analyze data, SmartSpend provides a **unified platform** where users can upload receipts, get automatic OCR extraction, intelligent categorization, and ask natural language questions to understand their spending patterns.
+- 🌐 **Web Application:** React (Vite)
+- 📱 **Mobile Application:** React Native (Expo) — Android & iOS
+- 🖥 **Backend API:** ASP.NET Core 8 Web API
+- 🗄 **Database:** PostgreSQL
+- 🤖 **AI Layer:** Gemini API (Multimodal) for OCR + insights
+
+SmartSpend enables users to upload/capture receipt images, extract structured expense details automatically, and ask natural language questions like:
+
+- “How much did I spend on food this month?”
+- “Why is my spending higher than last month?”
+- “How can I save ₹2000 next month?”
 
 > **Project Type:** Group Mini Project (Academic)  
 > **Course:** Bachelor of Technology in Computer Science and Engineering  
 > **Institution:** GLA University  
-> **Semester:** 6th Sem
+> **Semester:** 6th Sem  
 
 ---
 
 ## 🎯 Problem Statement
 
-Modern expense tracking faces critical pain points:
-- **Lost physical receipts** leading to incomplete records
-- **Manual data entry** is time-consuming and error-prone
-- **Existing apps are fragmented** – either do OCR or analytics, not both
-- **No natural way to query expense data** or get actionable insights
+Current expense tracking systems often suffer from:
 
-**SmartSpend solves this** by providing an end-to-end intelligent system that handles everything from receipt upload to AI-powered insights.
+- Loss of physical receipts
+- Manual data entry errors
+- Lack of intelligent insights
+- No natural language interaction
+- Fragmented OCR and analytics workflows
+
+**SmartSpend solves this** with a unified platform that:
+- digitizes receipts automatically,
+- stores structured financial data,
+- provides dashboards and analytics,
+- supports natural language financial queries,
+- and enables budget control by category.
 
 ---
 
-## ✨ Key Features
+## ✅ Objectives
 
-| Feature | Description |
-|---------|-------------|
-| 📸 **Receipt Upload** | Drag-and-drop upload with support for JPG, PNG, PDF. Cloud storage via Firebase |
-| 🔍 **OCR Extraction** | Automatic extraction of merchant, amount, date, items using Google Vision API |
-| 🎯 **Auto-Categorization** | AI-powered expense categorization (Food, Travel, Utilities, etc.) |
-| 📊 **Visual Dashboard** | Interactive charts showing spending trends, category breakdowns, top merchants |
-| 🤖 **AI Query Module** | Ask questions in natural language: "How much did I spend on groceries last month?" |
-| 💡 **Smart Insights** | Proactive suggestions: "You're overspending on dining by 23%" |
-| 📈 **Export Reports** | Generate CSV/PDF reports for tax filing or reimbursement |
+- Automate receipt digitization using AI
+- Store structured financial data securely
+- Provide real-time analytics dashboard
+- Enable natural language financial queries
+- Implement category-wise budget control
+- Deliver cross-platform access (Web + Mobile)
+
+---
+
+## 🧰 Final Technology Stack
+
+### Frontend
+
+**Web Application**
+- React.js (Vite)
+- Tailwind CSS
+- Axios
+- React Router
+
+**Mobile Application**
+- React Native (Expo)
+- React Navigation
+- Expo Camera
+- Expo Image Picker
+
+### Backend
+- ASP.NET Core 8 Web API
+- Entity Framework Core
+- JWT Authentication
+- Swagger / OpenAPI
+
+### Database
+- PostgreSQL
+- Npgsql EF Core Provider
+
+Stores:
+- Users
+- Expenses
+- Categories
+- Budgets
+- Receipt metadata
+
+### AI Layer (Gemini API — Multimodal)
+Used for:
+- **OCR Extraction:** merchant, date, amount, items (if present)
+- **Financial Insights:** explanations, saving suggestions, pattern detection, anomalies
+
+**Important design principle**
+- ✅ Backend calculates totals and analytics.
+- ✅ Gemini explains insights.
+- ❌ AI does not replace database logic.
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-┌─────────────────────────────────────┐
-│      React Frontend (Vite)          │
-│  Receipt Upload • Dashboard • AI    │
-└──────────────┬──────────────────────┘
-               │ REST API
-┌──────────────▼──────────────────────┐
-│     ASP.NET Core Web API            │
-│  Controllers • Services • Middleware│
-└──┬────────┬────────┬─────────────┬──┘
-   │        │        │             │
-   ▼        ▼        ▼             ▼
-┌─────┐ ┌────────┐ ┌────────┐ ┌────────┐
-│ SQL │ │Firebase│ │Gemini  │ │ OCR    │
-│Server│ │Storage │ │  API   │ │Service │
-└─────┘ └────────┘ └────────┘ └────────┘
+User (Web or Mobile)
+        ↓
+React / React Native Frontend
+        ↓ (REST API)
+ASP.NET Core Backend
+        ↓
+PostgreSQL Database
+        ↓
+Gemini API (OCR + Insights)
 ```
 
 ---
 
-## 🧰 Technology Stack
+## 🗄 Database Design
 
-### Frontend
-- React.js (Vite), Tailwind CSS, Axios, React Router, Chart.js
+### Entities
 
-### Backend
-- ASP.NET Core 8.0, Entity Framework Core, JWT Auth, Swagger/OpenAPI
+**USERS**
+- Id (UUID, PK)
+- Email
+- PasswordHash
+- FullName
+- CreatedAt
 
-### Database & Storage
-- SQL Server 2022 (Relational data), Firebase Storage (Receipt images)
+**CATEGORIES**
+- Id (int, PK)
+- Name
+- Icon
 
-### AI & ML
-- Google Gemini API (NLP queries), Google Cloud Vision API (OCR), ML Categorization
+**EXPENSES**
+- Id (int, PK)
+- UserId (FK)
+- CategoryId (FK)
+- Merchant
+- Amount
+- DateIncurred
+- ImageUrl
+- ReceiptText
+- CreatedAt
 
-### DevOps
-- Git & GitHub, Docker, CI/CD (GitHub Actions)
+**BUDGETS**
+- Id (int, PK)
+- UserId (FK)
+- CategoryId (FK)
+- MonthlyLimit
+- Month
+- Year
+
+### Relationships
+- One User → Many Expenses  
+- One User → Many Budgets  
+- One Category → Many Expenses  
+- One Category → Many Budgets  
 
 ---
 
-## 📂 Project Structure
+## ✨ Core Features
 
-```
-SmartSpend/
-├── client/                    # React Frontend
-│   ├── src/
-│   │   ├── components/        # UI components
-│   │   ├── pages/             # Page components
-│   │   ├── services/          # API services
-│   │   └── App.jsx
-│   └── package.json
-│
-├── server/                    # ASP.NET Core Backend
-│   ├── SmartSpend.API/
-│   │   ├── Controllers/
-│   │   ├── Services/
-│   │   ├── Models/
-│   │   ├── Data/
-│   │   └── Program.cs
-│   └── SmartSpend.sln
-│
-├── docs/
-│   ├── PRD.md
-│   ├── API_DOCUMENTATION.md
-│   └── TEAM_CONTRIBUTIONS.md
-│
-└── README.md
-```
+### 🧾 1) Receipt Scanning & Digitization
+**Workflow**
+1. User captures/uploads receipt image
+2. Backend stores image + metadata
+3. Gemini extracts structured data (OCR)
+4. Backend validates response
+5. Expense is saved in PostgreSQL
+
+**Extracted fields**
+- Merchant
+- Total amount
+- Date
+- Items (if available)
+
+**Fallback**
+- Manual edit supported when OCR is incomplete
+
+---
+
+### 📊 2) Expense Dashboard
+Displays:
+- Monthly spending summary
+- Category-wise breakdown
+- Interactive charts
+- Trend analysis (weekly / monthly)
+
+Example endpoints:
+- `GET /api/dashboard/summary`
+- `GET /api/analytics/by-category`
+
+---
+
+### 🤖 3) AI Insights & Natural Language Queries
+**How it works**
+1. User asks a question
+2. Backend aggregates relevant data from PostgreSQL
+3. Backend sends structured JSON + question to Gemini
+4. Gemini returns an explanation/insight
+5. Frontend displays results
+
+Capabilities:
+- Pattern detection
+- Budget comparison
+- Weekend vs weekday analysis
+- Spending anomaly detection
+- Saving suggestions
+
+---
+
+### 🔔 4) Budget Management
+- Set monthly limit per category
+- Track current spending vs limit
+- Alerts when nearing limit
+- AI-based optimization suggestions
+
+---
+
+## 🔌 API Endpoints
+
+### Authentication
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/profile`
+
+### Expenses
+- `POST /api/expenses/upload`
+- `GET /api/expenses`
+- `PUT /api/expenses/{id}`
+- `DELETE /api/expenses/{id}`
+
+### Budgets
+- `POST /api/budgets/set`
+- `GET /api/budgets`
+
+### Analytics
+- `GET /api/dashboard/summary`
+- `GET /api/analytics/by-category`
+
+### AI
+- `POST /api/insights/chat`
+
+---
+
+## 🔐 Security Implementation
+
+- JWT-based authentication
+- Password hashing
+- Secure API endpoints
+- Input validation
+- AI response validation before DB insertion
+- CORS configuration
+
+---
+
+## 🔁 Project Workflow (End-to-End)
+
+### Receipt Upload Flow
+`User → Upload → API → Gemini → JSON → Validate → Save → Return`
+
+### AI Query Flow
+`User Question → API → Query DB → Structured JSON → Gemini → Insight → Return`
+
+---
+
+## 🧩 Non-Functional Requirements
+
+- Responsive UI
+- Secure authentication
+- Scalable backend architecture
+- Error handling & validation
+- Modular service layer
+- API documentation via Swagger
+
+---
+
+## 🔮 Future Scope
+
+- Recurring expense detection
+- Predictive spending forecast
+- Subscription tracking
+- Multi-user shared expenses
+- Desktop app (Electron)
+- Bank integration APIs
 
 ---
 
 ## ⚙️ Getting Started
 
+> Note: This section describes the **final stack** (ASP.NET Core 8 + PostgreSQL + React Web + React Native Expo).
+
 ### Prerequisites
-- Node.js (v18+), .NET SDK (8.0+), SQL Server (2019+)
-- Firebase Account, Google Cloud Account (for Gemini & OCR APIs)
+- Node.js (v18+)
+- .NET SDK (8.0+)
+- PostgreSQL (14+ recommended)
+- Gemini API Key
 
 ### 1️⃣ Clone the Repository
 ```bash
@@ -142,83 +320,72 @@ git clone https://github.com/Pratyakshgupta887qwert/SmartSpend.git
 cd SmartSpend
 ```
 
-### 2️⃣ Backend Setup
+### 2️⃣ Backend Setup (ASP.NET Core + PostgreSQL)
 ```bash
 cd server/SmartSpend.API
 dotnet restore
 ```
 
-**Configure `appsettings.json`:**
+Configure `appsettings.json` (example):
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=SmartSpendDB;Trusted_Connection=True"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=smartspend;Username=postgres;Password=your_password"
   },
   "JwtSettings": {
     "Secret": "your-secret-key-min-32-chars",
     "ExpiryMinutes": 1440
   },
-  "Firebase": {
-    "StorageBucket": "your-bucket.appspot.com",
-    "ApiKey": "your-firebase-api-key"
-  },
-  "GeminiAPI": {
+  "GeminiApi": {
     "ApiKey": "your-gemini-api-key"
   }
 }
 ```
 
-**Run migrations & start server:**
+Run migrations & start server:
 ```bash
 dotnet ef database update
 dotnet run
 ```
-API runs on `https://localhost:5001` | Swagger: `https://localhost:5001/swagger`
 
-### 3️⃣ Frontend Setup
+Swagger:
+- `https://localhost:5001/swagger`
+
+### 3️⃣ Web Frontend Setup (React + Vite)
 ```bash
 cd client
 npm install
 ```
 
-**Create `.env` file:**
+Create `.env`:
 ```env
 VITE_API_URL=https://localhost:5001/api
-VITE_FIREBASE_API_KEY=your-firebase-api-key
-VITE_FIREBASE_STORAGE_BUCKET=your-app.appspot.com
 ```
 
-**Start development server:**
+Start:
 ```bash
 npm run dev
 ```
-Frontend runs on `http://localhost:5173`
+
+### 4️⃣ Mobile App Setup (React Native + Expo)
+```bash
+cd mobile
+npm install
+npx expo start
+```
 
 ---
 
-## 📊 API Endpoints
+## 🎓 Academic Value
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| **Authentication** |
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login with credentials |
-| GET | `/api/auth/profile` | Get user profile |
-| **Receipts** |
-| POST | `/api/receipts/upload` | Upload receipt (triggers OCR) |
-| GET | `/api/receipts` | Get all receipts |
-| DELETE | `/api/receipts/{id}` | Delete receipt |
-| **Expenses** |
-| GET | `/api/expenses` | Get all expenses (with filters) |
-| POST | `/api/expenses` | Create manual expense |
-| PUT | `/api/expenses/{id}` | Update expense |
-| **AI Queries** |
-| POST | `/api/ai/query` | Ask natural language question |
-| GET | `/api/ai/insights` | Get AI suggestions |
-| **Analytics** |
-| GET | `/api/analytics/summary` | Overall spending summary |
-| GET | `/api/analytics/by-category` | Category breakdown |
-| POST | `/api/analytics/export` | Export data (CSV/PDF) |
+This project demonstrates:
+- Full-stack development (Web + Mobile + Backend)
+- RESTful API design
+- Database modeling with PostgreSQL
+- JWT authentication
+- AI integration in production-style architecture
+- Retrieval-Augmented Generation (RAG)
+- Clean layered architecture
 
 ---
 
@@ -233,7 +400,7 @@ Frontend runs on `http://localhost:5173`
         <sub><b>Pratyaksh Gupta</b></sub>
       </a>
       <br />
-      <sub> Backend Developer & Database & DevOps </sub>
+      <sub>Backend Developer • Database • DevOps</sub>
       <br />
       <sub>📧 pratyaksh887@gmail.com</sub>
     </td>
@@ -244,7 +411,7 @@ Frontend runs on `http://localhost:5173`
         <sub><b>Neeti Sharma</b></sub>
       </a>
       <br />
-      <sub>Frontend Developer & AI/ML Integration</sub>
+      <sub>Frontend Developer • AI Integration</sub>
       <br />
       <sub>📧 member2@example.com</sub>
     </td>
@@ -255,7 +422,7 @@ Frontend runs on `http://localhost:5173`
         <sub><b>Aavani Pachauri</b></sub>
       </a>
       <br />
-      <sub>Deployment & Documentation</sub>
+      <sub>Deployment • Documentation</sub>
       <br />
       <sub>📧 member3@example.com</sub>
     </td>
@@ -266,7 +433,7 @@ Frontend runs on `http://localhost:5173`
         <sub><b>Kanshika Verma</b></sub>
       </a>
       <br />
-      <sub>API Development , Security & Testing </sub>
+      <sub>API Development • Security • Testing</sub>
       <br />
       <sub>📧 member4@example.com</sub>
     </td>
@@ -275,69 +442,35 @@ Frontend runs on `http://localhost:5173`
 
 ---
 
-## 🔮 Future Enhancements
-
-### Post-MVP Features
-- 💰 Budget management with real-time alerts
-- 📊 Monthly AI-generated spending reports
-- 🔄 Recurring expense detection (subscriptions)
-- 📈 Predictive analytics & forecasting
-- 👥 Multi-user expense sharing
-- 📱 React Native mobile app
-- 🏦 Bank account integration (Plaid API)
-
----
-
-## 🎓 Academic Context
-
-This project demonstrates:
-
-**Technical Skills:**
-- ✅ Full-Stack Development (ASP.NET Core + React)
-- ✅ AI/ML Integration (Gemini API, OCR)
-- ✅ Cloud Services (Firebase, Google Cloud)
-- ✅ RESTful API Design & Authentication
-- ✅ Database Design & Optimization
-
-**Soft Skills:**
-- ✅ Team Collaboration & Git Workflow
-- ✅ Agile Project Management
-- ✅ Problem Solving & System Design
-- ✅ Technical Documentation
-
----
-
 ## 📚 Documentation
-
-> 📘 **Complete Documentation:**  
-> - **[Product Requirements Document (PRD)](https://gist.github.com/Pratyakshgupta887qwert/37385b65cb199f9403fb8a3fb7cf96b1)** - Full technical specs
+- Swagger/OpenAPI available on backend run
+- (Optional) Add `/docs` links here if you maintain PRD/API docs in-repo
 
 ---
 
 ## 🤝 Contributing
 
-### For Team Members
 1. Create feature branch from `develop`
-2. Follow coding standards in [CONTRIBUTING.md](CONTRIBUTING.md)
+2. Follow coding standards in `CONTRIBUTING.md`
 3. Write tests for new features
-4. Submit PR with detailed description
+4. Submit PR with a detailed description
 5. Get approval before merging
 
-**Branch Naming:** `feature/feature-name`, `bugfix/bug-description`, `docs/update`
+**Branch naming:** `feature/feature-name`, `bugfix/bug-description`, `docs/update`
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for details.
+This project is licensed under the **MIT License** — see [LICENSE](LICENSE).
 
 ---
 
 ## 📧 Contact
 
 ### Faculty Guide
-- **Name:** Ayush Tiwari
-- **Email:** ayush.tiwari@gla.ac.in
+- **Name:** Ayush Tiwari  
+- **Email:** ayush.tiwari@gla.ac.in  
 
 ### Team Maintainer
 - **Pratyaksh Gupta**
@@ -346,28 +479,7 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for 
 
 ---
 
-## 🙏 Acknowledgments
-
-- **Ayush Tiwari** for project guidance
-- **GLA University** for infrastructure
-- **Google** for Gemini API & Cloud Vision API
-- **Open Source Community** for tools & libraries
-
----
-
 <div align="center">
-
-**⭐ Star this repository if you find it helpful!**
-
-**Made with ❤️ for smarter spending decisions**
-
----
-
-### Quick Links
-
-[🚀 Live Demo](#) • [📖 Documentation](https://gist.github.com/Pratyakshgupta887qwert/37385b65cb199f9403fb8a3fb7cf96b1) • [🐛 Issues](https://github.com/Pratyakshgupta887qwert/SmartSpend/issues)
-
----
 
 **Academic Project | 2026 | GLA UNIVERSITY**
 
