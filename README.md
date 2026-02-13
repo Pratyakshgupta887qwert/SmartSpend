@@ -133,48 +133,6 @@ Gemini API (OCR + Insights)
 
 ---
 
-## 🗄 Database Design
-
-### Entities
-
-**USERS**
-- Id (UUID, PK)
-- Email
-- PasswordHash
-- FullName
-- CreatedAt
-
-**CATEGORIES**
-- Id (int, PK)
-- Name
-- Icon
-
-**EXPENSES**
-- Id (int, PK)
-- UserId (FK)
-- CategoryId (FK)
-- Merchant
-- Amount
-- DateIncurred
-- ImageUrl
-- ReceiptText
-- CreatedAt
-
-**BUDGETS**
-- Id (int, PK)
-- UserId (FK)
-- CategoryId (FK)
-- MonthlyLimit
-- Month
-- Year
-
-### Relationships
-- One User → Many Expenses  
-- One User → Many Budgets  
-- One Category → Many Expenses  
-- One Category → Many Budgets  
-
----
 
 ## ✨ Core Features
 
@@ -234,42 +192,6 @@ Capabilities:
 - AI-based optimization suggestions
 
 ---
-
-## 🔌 API Endpoints
-
-### Authentication
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/auth/profile`
-
-### Expenses
-- `POST /api/expenses/upload`
-- `GET /api/expenses`
-- `PUT /api/expenses/{id}`
-- `DELETE /api/expenses/{id}`
-
-### Budgets
-- `POST /api/budgets/set`
-- `GET /api/budgets`
-
-### Analytics
-- `GET /api/dashboard/summary`
-- `GET /api/analytics/by-category`
-
-### AI
-- `POST /api/insights/chat`
-
----
-
-## 🔐 Security Implementation
-
-- JWT-based authentication
-- Password hashing
-- Secure API endpoints
-- Input validation
-- AI response validation before DB insertion
-- CORS configuration
-
 ---
 
 ## 🔁 Project Workflow (End-to-End)
@@ -458,6 +380,13 @@ This project demonstrates:
 
 **Branch naming:** `feature/feature-name`, `bugfix/bug-description`, `docs/update`
 
+---
+## 📄 Product Requirements Document (PRD)
+
+Detailed PRD available for this project.  
+Please visit the link below for complete understanding:
+
+👉 <a href="https://gist.github.com/Pratyakshgupta887qwert/37385b65cb199f9403fb8a3fb7cf96b1">Link to Look over</a>
 ---
 
 ## 📜 License
