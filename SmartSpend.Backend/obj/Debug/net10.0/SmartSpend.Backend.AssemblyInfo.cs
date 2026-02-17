@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmartSpend.Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c61a3d4649f8a38a655583b704dd169454b9b0a0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d46d6fd4836a397476f70a241023599016d99bd4")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmartSpend.Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmartSpend.Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
