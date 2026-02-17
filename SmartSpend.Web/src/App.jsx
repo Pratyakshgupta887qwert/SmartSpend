@@ -14,6 +14,4 @@ function App() {
       </Routes>
     </Router>
   )
-}
-
-export default App
+export default App;
