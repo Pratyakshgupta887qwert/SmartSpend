@@ -2,8 +2,8 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Sidebar from './components/Sidebar'
-import AuthPage from './pages/AuthPage'
-import Dashboard from './pages/Dashboard'
+import AuthPage from './Pages/AuthPage'
+import Dashboard from './Pages/Dashboard'
 
 function App() {
   return (
