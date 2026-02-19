@@ -1,7 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import Sidebar from './components/Sidebar'
+import UploadReceipt from './Pages/UploadReceipt';
 import AuthPage from './Pages/AuthPage'
 import Dashboard from './Pages/Dashboard'
 
@@ -11,6 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<AuthPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path ="/uploadreceipt" element={<UploadReceipt />}/>
       </Routes>
     </Router>
   )
