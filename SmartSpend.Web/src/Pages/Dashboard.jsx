@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
+
 function Dashboard() {
   return (
     // 1. Create a flex container for the whole screen
