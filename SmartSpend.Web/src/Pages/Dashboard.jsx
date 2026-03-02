@@ -1,9 +1,18 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
-
-
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 function Dashboard() {
+  const location=useLocation();
+  useEffect(()=>{
+    const params = new URLSearchParams(location.search);
+    const name= params.get("name");
+    const email =params.get("email");
+    if(name){
+      localStorage.setItem("userName",name);
+    }
+  },[location]);
   return (
     // 1. Create a flex container for the whole screen
     <div className="flex h-screen bg-gray-100">

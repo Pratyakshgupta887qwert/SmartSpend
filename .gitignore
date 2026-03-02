@@ -1,6 +1,6 @@
 # .NET
-bin/
-obj/
+**/bin/
+**/obj/
 
 # Node
 node_modules/
@@ -10,3 +10,6 @@ node_modules/
 
 # Logs
 *.log
+
+# Local development config
+appsettings.Development.json
