@@ -1,25 +1,30 @@
 import React from "react";
 import { LayoutDashboard, Receipt, Wallet, Settings, LogOut } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom"; // Added useLocation
+
+import {NavLink, useNavigate} from "react-router-dom"; // Added useLocation
 
 function Sidebar() {
   const navigate = useNavigate();
-  const location = useLocation(); // This tells us where we are (e.g., "/budgets")
+   // This tells us where we are (e.g., "/budgets")
+  const baseClass= "flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl transition-colors";
+  const activeClass ="bg-[#2d3139] text-white";
+  const inactiveClass="text-gray-400 hover:bg-[#252830]";
 
   // Helper to check if the path is active
-  const isActive = (path) => location.pathname === path;
+  // const isActive = (path) => location.pathname === path;
 
-  // Base styles for all buttons
-  const baseStyle = "flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl transition-all duration-300 w-full";
+  // // Base styles for all buttons
+  // const baseStyle = "flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl transition-all duration-300 w-full";
   
-  // Styles for Active vs Inactive
-  const activeStyle = "bg-[#2d3139] text-white";
-  const inactiveStyle = "text-gray-400 hover:bg-[#252830] hover:text-white";
+  // // Styles for Active vs Inactive
+  // const activeStyle = "bg-[#2d3139] text-white";
+  // const inactiveStyle = "text-gray-400 hover:bg-[#252830] hover:text-white";
 
   const handtologout = () => {
     // Clear user session or token here (if implemented)
     navigate("/");
   }
+
 
   return (
     <div className="hidden sm:flex flex-col h-screen w-20 md:w-64 bg-[#1e2128] text-white p-4 md:p-6 transition-all duration-300">
@@ -33,39 +38,42 @@ function Sidebar() {
       {/* 2. Menu Items */}
       <nav className="flex flex-col gap-4">
         
+
+        {/* Dashboard (Active) */}
+        <NavLink to="/dashboard" className={({isActive})=>`${baseClass} ${isActive ? activeClass : inactiveClass}`}>
+        {/* <button onClick={()=>navigate("/dashboard")}className="flex items-center justify-center md:justify-start gap-4 bg-[#2d3139] p-3 rounded-xl"> */}
+
         {/* Dashboard */}
-        <button 
-          onClick={() => navigate("/dashboard")}
-          className={`${baseStyle} ${isActive("/dashboard") ? activeStyle : inactiveStyle}`}
-        >
+       
           <LayoutDashboard size={20} className="min-w-[20px]" />
           <span className="hidden md:block">Dashboard</span>
-        </button>
+        {/* </button> */}
+        </NavLink>
 
         {/* Receipts */}
-        <button 
-          className={`${baseStyle} ${isActive("/receipts") ? activeStyle : inactiveStyle}`}
+        <NavLink 
+          to={"/receipts"}
+          className={({isActive})=>`${baseClass} ${isActive? activeClass: inactiveClass}`}
         >
           <Receipt size={20} className="min-w-[20px]" />
           <span className="hidden md:block">Receipts</span>
-        </button>
+        </NavLink>
 
-        {/* Budgets */}
-        <button 
-          onClick={() => navigate("/budgets")}
-          className={`${baseStyle} ${isActive("/budgets") ? activeStyle : inactiveStyle}`}
-        >
+
+        <NavLink to={"/budgets"} className={({isActive})=>`${baseClass} ${isActive? activeClass: inactiveClass}`}>
+        {/* <button onClick={()=>navigate("/budgets")}className="flex items-center justify-center md:justify-start gap-4 text-gray-400 p-3 hover:bg-[#252830] rounded-xl transition-colors"> */}
           <Wallet size={20} className="min-w-[20px]" />
           <span className="hidden md:block">Budgets</span>
-        </button>
+        {/* </button> */}
+        </NavLink>
 
         {/* Settings */}
-        <button 
-          className={`${baseStyle} ${isActive("/settings") ? activeStyle : inactiveStyle}`}
-        >
+        <NavLink to= {"/settings"}
+        
+          className={({isActive})=>`${baseClass} ${isActive? activeClass: inactiveClass}`}>
           <Settings size={20} className="min-w-[20px]" />
           <span className="hidden md:block">Settings</span>
-        </button>
+        </NavLink>
 
       </nav>
 
