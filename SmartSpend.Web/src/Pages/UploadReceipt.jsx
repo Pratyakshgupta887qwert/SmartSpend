@@ -12,6 +12,9 @@ function UploadReceipt() {
   };
 
   return (
+ 
+
+
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-7xl mx-auto">
         
@@ -96,6 +99,8 @@ function UploadReceipt() {
         </div>
       </div>
     </div>
+   
+   // </div>
   );
 }
 
