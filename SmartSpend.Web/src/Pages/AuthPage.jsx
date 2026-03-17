@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function AuthPage() {
   const [isActive, setIsActive] = useState(false);
@@ -12,15 +13,52 @@ function AuthPage() {
   const handleLoginClick = () => setIsActive(false);
 
   // Handle Login Submission
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async(e) => {
     e.preventDefault();
-    const username = loginUserRef.current.value;
-    
+    const email = loginUserRef.current.value;
+    const password= e.target[1].value;
     // Save the name to browser memory
-    localStorage.setItem("userName", username);
+    //localStorage.setItem("userName", username);
+    try{
+      const response = await axios.post("https://localhost:5173/signin-google", {
+        email:email,
+        password:password
+      }
+      );
+    const token= response.data.token;
+    localStorage.setItem("token",token);
     
     // Go to dashboard
     navigate("/dashboard");
+
+    }
+    catch(error){
+      alert("Login Failed");
+      console.error(error);
+    }
+  };
+
+  const handleRegisterSubmit = async(e) => {
+    e.preventDefault();
+    const name= e.target[0].value;
+    const email = e.target[1].value;
+    const password= e.target[2].value;
+
+    try{
+      const response = await axios.post("https://localhost:5173/api/auth/register", {
+        name:name,
+        email:email,
+        password:password
+      }
+      );
+    const token = response.data.token;
+    localStorage.setItem("token",token);
+    navigate("/dashboard");
+    }
+    catch(error){
+      alert("Registration Failed");
+      console.error(error);
+    }
   };
 
   return (
@@ -67,7 +105,7 @@ function AuthPage() {
         {/* Registration Form Section */}
         <div className={`absolute right-0 w-1/2 h-full bg-white flex items-center text-center p-10 z-[1] transition-all duration-[600ms] 
           ${isActive ? "translate-x-[-100%] opacity-100 visible" : "translate-x-0 opacity-0 invisible"}`}>
-          <form className="w-full" onSubmit={(e) => e.preventDefault()}>
+          <form className="w-full" onSubmit={handleRegisterSubmit}>
             <h1 className="text-4xl font-bold mb-4">Registration</h1>
             <div className="relative my-8"><input type="text" placeholder="Username" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
             <div className="relative my-8"><input type="email" placeholder="Email" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
