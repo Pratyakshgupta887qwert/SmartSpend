@@ -20,7 +20,7 @@ function AuthPage() {
     // Save the name to browser memory
     //localStorage.setItem("userName", username);
     try{
-      const response = await axios.post("https://localhost:5173/signin-google", {
+      const response = await axios.post("https://localhost:5030/api/auth/login", {
         email:email,
         password:password
       }
@@ -45,7 +45,7 @@ function AuthPage() {
     const password= e.target[2].value;
 
     try{
-      const response = await axios.post("https://localhost:5173/api/auth/register", {
+      const response = await axios.post("https://localhost:5030/api/auth/register", {
         name:name,
         email:email,
         password:password
@@ -75,7 +75,7 @@ function AuthPage() {
               <input 
                 ref={loginUserRef}
                 type="text" 
-                placeholder="Username" 
+                placeholder="Email" 
                 className="w-full py-3 px-5 pr-12 bg-[#eee] rounded-lg outline-none font-medium" 
                 required 
               />
