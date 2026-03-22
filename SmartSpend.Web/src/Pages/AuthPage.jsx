@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
+
 
 function AuthPage() {
   const [isActive, setIsActive] = useState(false);
@@ -15,48 +17,75 @@ function AuthPage() {
   // Handle Login Submission
   const handleLoginSubmit = async(e) => {
     e.preventDefault();
-    const email = loginUserRef.current.value;
-    const password= e.target[1].value;
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
+    console.log("LOGIN DATA: ",email,password);
     // Save the name to browser memory
     //localStorage.setItem("userName", username);
     try{
       const response = await axios.post("https://localhost:5030/api/auth/login", {
         email:email,
         password:password
+        
       }
+      
       );
     const token= response.data.token;
     localStorage.setItem("token",token);
+    const decode = jwtDecode(token);
+    const name= decode.name || decode["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+    console.log(decode);
+    localStorage.setItem("userName",name);
     
     // Go to dashboard
     navigate("/dashboard");
 
     }
     catch(error){
-      alert("Login Failed");
+      const message= error.response?.data;
+      if(message==="Invalid Credentials"){
+        alert("Either your memory is bad or your typing is worse 💀");
+      }else{
+        alert(message || "Something broke… not your fault tho 😤")
+      }
       console.error(error);
     }
   };
 
   const handleRegisterSubmit = async(e) => {
     e.preventDefault();
-    const name= e.target[0].value;
-    const email = e.target[1].value;
-    const password= e.target[2].value;
+    const form = e.target;
+    const formName= form.name.value;
+    const email = form.email.value;
+    const password= form.password.value;
+    console.log("REGISTER DATA: ",formName,email,password);
 
     try{
       const response = await axios.post("https://localhost:5030/api/auth/register", {
-        name:name,
+        name:formName,
         email:email,
         password:password
       }
       );
     const token = response.data.token;
     localStorage.setItem("token",token);
+    
+    const decode= jwtDecode(token);
+    const name= decode.name || decode["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+    console.log(decode);
+    localStorage.setItem("userName",name);
+
+    // Go to dashboard
     navigate("/dashboard");
     }
     catch(error){
-      alert("Registration Failed");
+      const message= error.response?.data;
+      if(message==="User Already Exists"){
+        alert("You’re already on the list 👀 go log in.");
+      }else{
+        alert(message || "Something broke… not your fault tho 😤")
+      }
       console.error(error);
     }
   };
@@ -73,7 +102,7 @@ function AuthPage() {
             
             <div className="relative my-8">
               <input 
-                ref={loginUserRef}
+                name="email"
                 type="text" 
                 placeholder="Email" 
                 className="w-full py-3 px-5 pr-12 bg-[#eee] rounded-lg outline-none font-medium" 
@@ -83,7 +112,7 @@ function AuthPage() {
             </div>
 
             <div className="relative my-8">
-              <input type="password" placeholder="Password" className="w-full py-3 px-5 pr-12 bg-[#eee] rounded-lg outline-none font-medium" required />
+              <input name ="password" type="password" placeholder="Password" className="w-full py-3 px-5 pr-12 bg-[#eee] rounded-lg outline-none font-medium" required />
               <i className='bx bxs-lock-alt absolute right-5 top-1/2 -translate-y-1/2 text-xl'></i>
             </div>
 
@@ -107,9 +136,9 @@ function AuthPage() {
           ${isActive ? "translate-x-[-100%] opacity-100 visible" : "translate-x-0 opacity-0 invisible"}`}>
           <form className="w-full" onSubmit={handleRegisterSubmit}>
             <h1 className="text-4xl font-bold mb-4">Registration</h1>
-            <div className="relative my-8"><input type="text" placeholder="Username" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
-            <div className="relative my-8"><input type="email" placeholder="Email" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
-            <div className="relative my-8"><input type="password" placeholder="Password" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
+            <div className="relative my-8"><input name ="name" type="text" placeholder="Username" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
+            <div className="relative my-8"><input name ="email" type="email" placeholder="Email" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
+            <div className="relative my-8"><input name ="password" type="password" placeholder="Password" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
             <button type="submit" className="w-full h-12 bg-[#7494ec] text-white rounded-lg font-semibold">Register</button>
           </form>
         </div>

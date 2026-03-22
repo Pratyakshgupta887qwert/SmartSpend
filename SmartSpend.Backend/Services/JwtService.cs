@@ -19,7 +19,8 @@ namespace SmartSpend.Backend.Services{
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role,user.Role)
+            new Claim(ClaimTypes.Role,user.Role ?? "User"),
+            new Claim("name", user.Name)
             };
         var secret = _config["JwtSettings:Secret"];
 

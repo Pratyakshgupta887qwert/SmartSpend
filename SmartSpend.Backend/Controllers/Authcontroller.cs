@@ -45,7 +45,8 @@ namespace SmartSpend.Backend.Controllers
                 var user= new User{
                     Name= registerDto.Name,
                     Email= registerDto.Email,
-                    PasswordHash=BCrypt.Net.BCrypt.HashPassword(registerDto.Password)
+                    PasswordHash=BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                    Role="User"
             };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
