@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("09f9b6dd-4aff-4ca6-a28f-ea121872bad0")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmartSpend.Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+037f246167b311d19640794b48669c9818f8be93")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed9c2beea75d5cc17a21a4b36bed5d4790eff1bb")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmartSpend.Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmartSpend.Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

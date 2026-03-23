@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "nv+u1DJjXYQ=",
+  "dgSpecHash": "4iNWCOR3RzM=",
   "success": true,
   "projectFilePath": "D:\\github\\SmartSpend\\SmartSpend.Backend\\SmartSpend.Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\praty\\.nuget\\packages\\cloudinarydotnet\\1.28.0\\cloudinarydotnet.1.28.0.nupkg.sha512",
     "C:\\Users\\praty\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\praty\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\10.0.3\\microsoft.aspnetcore.authentication.google.10.0.3.nupkg.sha512",
     "C:\\Users\\praty\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.3\\microsoft.aspnetcore.authentication.jwtbearer.10.0.3.nupkg.sha512",
     "C:\\Users\\praty\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.3\\microsoft.aspnetcore.openapi.10.0.3.nupkg.sha512",
     "C:\\Users\\praty\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",

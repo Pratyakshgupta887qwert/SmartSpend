@@ -57,7 +57,10 @@ function AuthPage() {
                 Login
             </button>
 
-            <p className="text-[14.5px] my-4 text-gray-600">or login with google</p>
+            <p className="text-[14.5px] my-4 text-gray-600">Or</p>
+            <button type="button" onClick={()=> window.location.href="https://localhost:5030/api/auth/login"} className="w-full h-12 bg-[#7494ec] text-white rounded-lg shadow-md font-semibold hover:bg-[#5a7bd4] transition-colors">
+              Login with Google
+            </button>
           </form>
         </div>
 

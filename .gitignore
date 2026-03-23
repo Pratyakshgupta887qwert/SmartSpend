@@ -1,0 +1,18 @@
+# .NET
+**/bin/
+**/obj/
+
+# Node
+node_modules/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Local development config
+appsettings.Development.json
+
+# appsettings.json inside the backend project
+SmartSpend.Backend/appsettings.json
