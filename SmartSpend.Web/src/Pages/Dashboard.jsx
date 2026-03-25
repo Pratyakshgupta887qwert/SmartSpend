@@ -11,7 +11,7 @@ function Dashboard() {
     const token = params.get("token");
     if(token){
       localStorage.setItem("token",token);
-      const decode=JSON.parse(atob(token.split(".")[1]));
+      const decode=jwtDecode(token);
       const name=decode.name||decode["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]||"User";
       localStorage.setItem("userName",name);
       window.history.replaceState({},document.title,"/dashboard");
