@@ -29,7 +29,7 @@ function Dashboard() {
   }, [location]);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-[#f5f7fb]">
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
@@ -50,7 +50,7 @@ function Dashboard() {
                   { title: "Savings", amount: "$2,000", color: "text-blue-500" },
                   { title: "Investment", amount: "$1,600", color: "text-purple-500" },
                 ].map((item, i) => (
-                  <div key={i} className="bg-white rounded-xl p-4 shadow-sm">
+                  <div key={i} className="bg-white rounded-xl p-4 shadow-sm bg-white rounded-xl shadow-sm border border-gray-100">
                     <p className="text-xs text-gray-400">{item.title}</p>
                     <h1 className={`text-xl font-bold mt-1 ${item.color}`}>
                       {item.amount}
