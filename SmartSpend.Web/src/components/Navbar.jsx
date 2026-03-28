@@ -70,7 +70,7 @@ function Navbar() {
                         </p>
                         <p className="text-[11px] text-slate-500">{storedRole} Account</p>
                     </div>
-                    <ChevronDown className="w-4 h-4 text-slate-400 hidden md:block group-hover:text-green-700 transition-colors" />
+                    {/* <ChevronDown className="w-4 h-4 text-slate-400 hidden md:block group-hover:text-green-700 transition-colors" /> */}
                 </button>
 
             </div>
