@@ -14,5 +14,9 @@ public class User
 
     public string Role {get; set; } = "User";
 
+    public DateTime? FirstLoginAt { get; set; }
+
+    public string? ProfileImageUrl { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

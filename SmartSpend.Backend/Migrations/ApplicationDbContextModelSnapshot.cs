@@ -37,6 +37,9 @@ namespace SmartSpend.Backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("FirstLoginAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("GoogleId")
                         .HasColumnType("text");
 
@@ -45,6 +48,9 @@ namespace SmartSpend.Backend.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfileImageUrl")
                         .HasColumnType("text");
 
                     b.Property<string>("Role")

@@ -5,9 +5,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 function Navbar() {
     const location = useLocation();
     const navigate = useNavigate();
+    const apiBaseUrl = "https://localhost:5030";
 
     // 1. Retrieve the stored name (Fallback to 'User' if empty)
     const storedName = localStorage.getItem("userName") || "User";
+    const storedRole = localStorage.getItem("userRole") || "User";
+    const storedImage = localStorage.getItem("userImage") || "";
+
+    const resolvedImage = storedImage
+        ? (storedImage.startsWith("/profile-images/")
+            ? `${apiBaseUrl}/api/auth/profile-image/${storedImage.split("/").pop()}`
+            : (storedImage.startsWith("http://") || storedImage.startsWith("https://")
+                ? storedImage
+                : `${apiBaseUrl}${storedImage}`))
+        : "https://ui-avatars.com/api/?name=User&background=E2E8F0&color=334155";
     useEffect(()=>{
         const token=localStorage.getItem("token");
         if(!token){
@@ -49,7 +60,7 @@ function Navbar() {
                 {/* Profile Section */}
                 <button className="flex items-center gap-3 p-1 rounded-xl hover:bg-gray-50 transition-all group text-left">
                     <img 
-                        src="" 
+                        src={resolvedImage}
                         alt="User" 
                         className="w-9 h-9 rounded-xl object-cover shadow-sm border border-gray-100" 
                     />
@@ -57,7 +68,7 @@ function Navbar() {
                         <p className="text-sm font-semibold text-gray-800 leading-tight">
                             {storedName}
                         </p>
-                        <p className="text-[11px] text-gray-400">Student Account</p>
+                        <p className="text-[11px] text-gray-400">{storedRole} Account</p>
                     </div>
                     <ChevronDown className="w-4 h-4 text-gray-400 hidden md:block group-hover:text-gray-600 transition-colors" />
                 </button>
