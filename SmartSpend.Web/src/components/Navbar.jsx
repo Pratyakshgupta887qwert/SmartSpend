@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bell, ChevronDown } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Navbar() {
     const location = useLocation();
-    
+    const navigate = useNavigate();
+
     // 1. Retrieve the stored name (Fallback to 'User' if empty)
     const storedName = localStorage.getItem("userName") || "User";
-
+    useEffect(()=>{
+        const token=localStorage.getItem("token");
+        if(!token){
+            navigate("/");
+        }
+    },[navigate]);
     // 2. Determine title based on current path
     const rawPath = location.pathname.split("/")[1];
     
@@ -43,7 +49,7 @@ function Navbar() {
                 {/* Profile Section */}
                 <button className="flex items-center gap-3 p-1 rounded-xl hover:bg-gray-50 transition-all group text-left">
                     <img 
-                        src="https://i.pravatar.cc/40" 
+                        src="" 
                         alt="User" 
                         className="w-9 h-9 rounded-xl object-cover shadow-sm border border-gray-100" 
                     />

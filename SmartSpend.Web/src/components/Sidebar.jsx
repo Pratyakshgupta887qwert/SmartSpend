@@ -7,15 +7,15 @@ function Sidebar() {
 
   const baseClass =
     "flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl transition-colors";
-  const activeClass = "bg-[#2d3139] text-white";
-  const inactiveClass = "text-gray-400 hover:bg-[#252830]";
+ const activeClass = "bg-green-100 text-green-600";
+const inactiveClass = "text-gray-500 hover:bg-green-50";
 
   const handleLogout = () => {
     navigate("/");
   };
 
   return (
-    <div className="hidden sm:flex flex-col h-screen w-20 md:w-64 bg-[#1e2128] text-white p-4 md:p-6 transition-all duration-300">
+    <div className="hidden sm:flex flex-col h-screen w-20 md:w-64 bg-white border-r border-gray-200 p-4 md:p-6">
 
       {/* Logo */}
       <div className="flex items-center gap-3 mb-10 justify-center md:justify-start">

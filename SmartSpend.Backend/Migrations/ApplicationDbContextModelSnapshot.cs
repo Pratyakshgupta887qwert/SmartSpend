@@ -38,10 +38,16 @@ namespace SmartSpend.Backend.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("GoogleId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 

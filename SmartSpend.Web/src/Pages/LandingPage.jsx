@@ -11,23 +11,23 @@ function LandingPage() {
       {/* NAVBAR */}
       <nav className="flex justify-between items-center px-10 py-6 shadow-sm">
 
-        <h1 className="text-2xl font-bold text-blue-600">
+        <h1 className="text-2xl font-bold text-green-600">
           SmartSpend
         </h1>
 
         <div className="flex gap-8 items-center">
 
-          <a href="#features" className="text-gray-600 hover:text-blue-600">
+          <a href="#features" className="text-gray-600 hover:text-green-600">
             Features
           </a>
 
-          <a href="#how" className="text-gray-600 hover:text-blue-600">
+          <a href="#how" className="text-gray-600 hover:text-green-600">
             How it works
           </a>
 
           <button
             onClick={() => navigate("/login")}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
           >
             Login
           </button>
@@ -51,7 +51,7 @@ function LandingPage() {
 
         <button
           onClick={() => navigate("/login")}
-          className="bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-blue-700 hover:scale-105 transition duration-300 shadow-md"
+          className="bg-green-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-700 hover:scale-105 transition duration-300 shadow-md"
         >
           Get Started
         </button>
@@ -86,7 +86,7 @@ function LandingPage() {
 
           <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition text-center">
 
-            <Receipt className="mx-auto mb-4 text-blue-600" size={40} />
+            <Receipt className="mx-auto mb-4 text-green-600" size={40} />
 
             <h3 className="text-xl font-semibold mb-2">
               Upload Receipts
@@ -101,7 +101,7 @@ function LandingPage() {
 
           <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition text-center">
 
-            <BarChart3 className="mx-auto mb-4 text-blue-600" size={40} />
+            <BarChart3 className="mx-auto mb-4 text-green-600" size={40} />
 
             <h3 className="text-xl font-semibold mb-2">
               Spending Insights
@@ -116,7 +116,7 @@ function LandingPage() {
 
           <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition text-center">
 
-            <Wallet className="mx-auto mb-4 text-blue-600" size={40} />
+            <Wallet className="mx-auto mb-4 text-green-600" size={40} />
 
             <h3 className="text-xl font-semibold mb-2">
               Budget Tracking
