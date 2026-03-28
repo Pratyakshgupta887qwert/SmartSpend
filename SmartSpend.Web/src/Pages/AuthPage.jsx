@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
@@ -8,9 +8,6 @@ function AuthPage() {
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
   
-  // Create a reference to the username input
-  const loginUserRef = useRef(null);
-
   const handleRegisterClick = () => setIsActive(true);
   const handleLoginClick = () => setIsActive(false);
 
@@ -91,28 +88,28 @@ function AuthPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-green-50 to-green-100 font-['Poppins'] p-5">
-      <div className="relative w-[850px] h-[550px] bg-white rounded-[30px] shadow-[0_0_30px_rgba(0,0,0,0.2)] overflow-hidden">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#ecf8ef] via-[#f5fbf7] to-[#e8f6ee] font-['Manrope'] p-5">
+      <div className="relative w-[850px] h-[550px] bg-white rounded-[30px] shadow-[0_25px_70px_-45px_rgba(16,24,40,0.55)] border border-green-100 overflow-hidden">
         
         {/* Login Form Section */}
         <div className={`absolute right-0 w-1/2 h-full bg-white flex items-center text-center p-10 z-[1] transition-all duration-[600ms] 
           ${isActive ? "-translate-x-full opacity-0 invisible" : "translate-x-0 opacity-100 visible"}`}>
           <form className="w-full" onSubmit={handleLoginSubmit}>
-            <h1 className="text-4xl font-bold mb-4">Login</h1>
+            <h1 className="text-4xl font-bold mb-4 text-[#173122]">Login</h1>
             
             <div className="relative my-8">
               <input 
                 name="email"
                 type="text" 
                 placeholder="Email" 
-                className="w-full py-3 px-5 pr-12 bg-[#eee] rounded-lg outline-none font-medium" 
+                className="w-full py-3 px-5 pr-12 bg-[#f6faf8] rounded-lg outline-none font-medium border border-green-100" 
                 required 
               />
               <i className='bx bxs-user absolute right-5 top-1/2 -translate-y-1/2 text-xl'></i>
             </div>
 
             <div className="relative my-8">
-              <input name ="password" type="password" placeholder="Password" className="w-full py-3 px-5 pr-12 bg-[#eee] rounded-lg outline-none font-medium" required />
+              <input name ="password" type="password" placeholder="Password" className="w-full py-3 px-5 pr-12 bg-[#f6faf8] rounded-lg outline-none font-medium border border-green-100" required />
               <i className='bx bxs-lock-alt absolute right-5 top-1/2 -translate-y-1/2 text-xl'></i>
             </div>
 
@@ -120,12 +117,12 @@ function AuthPage() {
               <a href="#" className="text-gray-700">Forgot Password?</a>
             </div>
 
-            <button type="submit" className="w-full h-12 bg-green-500 text-white rounded-lg shadow-md font-semibold hover:bg-green-600 transition-colors">
+            <button type="submit" className="w-full h-12 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-md font-semibold hover:brightness-95 transition-colors">
                 Login
             </button>
 
             <p className="text-[14.5px] my-4 text-gray-600">Or</p>
-            <button type="button" onClick={()=> window.location.href="https://localhost:5030/api/auth/login"} className="w-full h-12 bg-green-500 text-white rounded-lg shadow-md font-semibold hover:bg-green-600 transition-colors">
+            <button type="button" onClick={()=> window.location.href="https://localhost:5030/api/auth/login"} className="w-full h-12 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg shadow-md font-semibold hover:brightness-95 transition-colors">
               Login with Google
             </button>
           </form>
@@ -135,17 +132,17 @@ function AuthPage() {
         <div className={`absolute right-0 w-1/2 h-full bg-white flex items-center text-center p-10 z-[1] transition-all duration-[600ms] 
           ${isActive ? "translate-x-[-100%] opacity-100 visible" : "translate-x-0 opacity-0 invisible"}`}>
           <form className="w-full" onSubmit={handleRegisterSubmit}>
-            <h1 className="text-4xl font-bold mb-4">Registration</h1>
-            <div className="relative my-8"><input name ="name" type="text" placeholder="Username" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
-            <div className="relative my-8"><input name ="email" type="email" placeholder="Email" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
-            <div className="relative my-8"><input name ="password" type="password" placeholder="Password" className="w-full py-3 px-5 bg-[#eee] rounded-lg outline-none" required /></div>
-            <button type="submit" className="w-full h-12 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors">Register</button>
+            <h1 className="text-4xl font-bold mb-4 text-[#173122]">Registration</h1>
+            <div className="relative my-8"><input name ="name" type="text" placeholder="Username" className="w-full py-3 px-5 bg-[#f6faf8] border border-green-100 rounded-lg outline-none" required /></div>
+            <div className="relative my-8"><input name ="email" type="email" placeholder="Email" className="w-full py-3 px-5 bg-[#f6faf8] border border-green-100 rounded-lg outline-none" required /></div>
+            <div className="relative my-8"><input name ="password" type="password" placeholder="Password" className="w-full py-3 px-5 bg-[#f6faf8] border border-green-100 rounded-lg outline-none" required /></div>
+            <button type="submit" className="w-full h-12 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:brightness-95 transition-colors">Register</button>
           </form>
         </div>
 
         {/* Toggle Panels */}
         <div className="absolute w-full h-full pointer-events-none">
-          <div className={`absolute top-0 w-[300%] h-full bg-green-500 rounded-[150px] transition-all duration-[1.8s] ease-in-out z-[2] 
+          <div className={`absolute top-0 w-[300%] h-full bg-gradient-to-br from-green-500 to-emerald-600 rounded-[150px] transition-all duration-[1.8s] ease-in-out z-[2] 
             ${isActive ? "left-1/2" : "-left-[250%]"}`}></div>
 
           <div className={`absolute left-0 w-1/2 h-full flex flex-col justify-center items-center text-white z-[2] transition-all duration-[600ms] pointer-events-auto
