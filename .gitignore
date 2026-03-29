@@ -11,8 +11,15 @@ node_modules/
 # Logs
 *.log
 
-# Local development config
-appsettings.Development.json
+# # Local development config
+# appsettings.Development.json
 
 # appsettings.json inside the backend project
 SmartSpend.Backend/appsettings.json
+
+# Backend runtime uploads
+SmartSpend.Backend/Uploads/
+
+#package.json and package-lock.json
+/package.json
+/package-lock.json

@@ -6,20 +6,20 @@ function Sidebar() {
   const navigate = useNavigate();
 
   const baseClass =
-    "flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl transition-colors";
-  const activeClass = "bg-[#2d3139] text-white";
-  const inactiveClass = "text-gray-400 hover:bg-[#252830]";
+    "flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl transition-all duration-200";
+ const activeClass = "bg-green-100/90 text-green-700 shadow-sm border border-green-200";
+const inactiveClass = "text-slate-500 hover:bg-green-50 hover:text-green-700";
 
   const handleLogout = () => {
     navigate("/");
   };
 
   return (
-    <div className="hidden sm:flex flex-col h-screen w-20 md:w-64 bg-[#1e2128] text-white p-4 md:p-6 transition-all duration-300">
+    <div className="hidden sm:flex flex-col h-screen w-20 md:w-64 bg-gradient-to-b from-white to-[#f5faf7] border-r border-green-100 p-4 md:p-6">
 
       {/* Logo */}
       <div className="flex items-center gap-3 mb-10 justify-center md:justify-start">
-        <div className="h-6 w-6 min-w-[24px] bg-green-500 rounded-full border border-green-900"></div>
+        <div className="h-7 w-7 min-w-[28px] bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-md"></div>
         <span className="text-xl font-bold hidden md:block truncate">
           SmartSpend
         </span>
@@ -75,10 +75,10 @@ function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="mt-auto border-t border-gray-800 pt-4">
+      <div className="mt-auto border-t border-green-100 pt-4">
         <button
           onClick={handleLogout}
-          className="flex items-center justify-center md:justify-start gap-4 text-gray-400 p-3 hover:text-red-400 w-full transition-colors"
+          className="flex items-center justify-center md:justify-start gap-4 text-slate-400 p-3 rounded-xl hover:bg-red-50 hover:text-red-500 w-full transition-colors"
         >
           <LogOut size={20} />
           <span className="hidden md:block">Log Out</span>

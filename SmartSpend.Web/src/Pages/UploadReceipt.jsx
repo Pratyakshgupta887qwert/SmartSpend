@@ -20,7 +20,7 @@ function UploadReceipt() {
   };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="flex ss-app-bg min-h-screen">
 
       {/* Sidebar */}
       <Sidebar />
@@ -31,22 +31,22 @@ function UploadReceipt() {
         {/* Navbar */}
         <Navbar />
 
-        <div className="p-8">
+        <div className="p-4 md:p-8">
 
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">
+          <h1 className="ss-title text-3xl mb-8">
             Upload Receipt
           </h1>
 
           <div className="grid md:grid-cols-2 gap-8">
 
             {/* Upload Section */}
-            <div className="bg-white p-6 rounded-xl shadow">
+            <div className="ss-card p-6">
 
-              <h2 className="text-lg font-semibold mb-4">
+              <h2 className="text-lg font-semibold text-[#163122] mb-4">
                 Upload Receipt
               </h2>
 
-              <label className="border-2 border-dashed border-gray-300 rounded-xl h-40 flex items-center justify-center cursor-pointer hover:border-blue-500 transition">
+              <label className="border-2 border-dashed border-green-200 rounded-xl h-40 flex items-center justify-center cursor-pointer hover:border-green-500 bg-green-50/40 transition">
 
                 <input
                   type="file"
@@ -54,7 +54,7 @@ function UploadReceipt() {
                   onChange={handleFileChange}
                 />
 
-                <span className="text-gray-500">
+                <span className="text-slate-500 font-medium">
                   Click to upload receipt image
                 </span>
 
@@ -64,7 +64,7 @@ function UploadReceipt() {
               {/* Save Button */}
               <button
                 onClick={handleSave}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg mt-6 hover:bg-blue-700 transition"
+                className="ss-btn-primary text-white px-6 py-3 mt-6"
               >
                 Save Expense
               </button>
@@ -73,9 +73,9 @@ function UploadReceipt() {
 
 
             {/* Preview Section */}
-            <div className="bg-white p-6 rounded-xl shadow">
+            <div className="ss-card p-6">
 
-              <h2 className="text-lg font-semibold mb-4">
+              <h2 className="text-lg font-semibold text-[#163122] mb-4">
                 Receipt Preview
               </h2>
 
@@ -84,12 +84,12 @@ function UploadReceipt() {
                 <img
                   src={previewImage}
                   alt="Receipt Preview"
-                  className="rounded-lg w-full max-h-80 object-contain"
+                  className="rounded-lg w-full max-h-80 object-contain border border-green-100"
                 />
 
               ) : (
 
-                <div className="flex items-center justify-center h-40 text-gray-400">
+                <div className="flex items-center justify-center h-40 text-slate-400 border border-dashed border-green-200 rounded-lg bg-green-50/30">
                   Uploaded receipt will appear here
                 </div>
 
