@@ -1,13 +1,28 @@
-import React, { useEffect } from 'react';
-import { Bell, ChevronDown } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Bell } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Notification from './Notification';
+import { useNotifications } from '../context/NotificationContext';
 
 function Navbar() {
     const location = useLocation();
     const navigate = useNavigate();
+    const apiBaseUrl = "https://localhost:5030";
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotifications();
 
     // 1. Retrieve the stored name (Fallback to 'User' if empty)
     const storedName = localStorage.getItem("userName") || "User";
+    const storedRole = localStorage.getItem("userRole") || "User";
+    const storedImage = localStorage.getItem("userImage") || "";
+
+    const resolvedImage = storedImage
+        ? (storedImage.startsWith("/profile-images/")
+            ? `${apiBaseUrl}/api/auth/profile-image/${storedImage.split("/").pop()}`
+            : (storedImage.startsWith("http://") || storedImage.startsWith("https://")
+                ? storedImage
+                : `${apiBaseUrl}${storedImage}`))
+        : "https://ui-avatars.com/api/?name=User&background=E2E8F0&color=334155";
     useEffect(()=>{
         const token=localStorage.getItem("token");
         if(!token){
@@ -23,15 +38,15 @@ function Navbar() {
         : rawPath.charAt(0).toUpperCase() + rawPath.slice(1);
 
     return (
-        <nav className="w-full h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10">
+        <nav className="w-full h-20 bg-white/90 backdrop-blur-md border-b border-green-100 flex items-center justify-between px-6 md:px-8 sticky top-0 z-10">
             
             {/* LEFT SIDE: Dynamic Welcome Message */}
             <div>
-                <h1 className="text-xl font-bold text-gray-800 transition-all">
+                <h1 className="text-xl font-extrabold text-[#14281b] transition-all tracking-tight">
                     {displayTitle}
                 </h1>
                 {rawPath === "dashboard" && (
-                    <p className="text-[11px] text-gray-400 font-medium">Monitoring your spending habits.</p>
+                    <p className="text-[11px] text-slate-500 font-medium">Monitoring your spending habits.</p>
                 )}
             </div>
 
@@ -39,27 +54,45 @@ function Navbar() {
             <div className="flex items-center gap-2 sm:gap-4">
                 
                 {/* Notification Bell */}
-                <button className="relative p-2 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-all">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
+                <div className="relative">
+                    <button
+                        onClick={() => setIsNotificationOpen((previous) => !previous)}
+                        className="relative p-2 rounded-xl text-slate-500 hover:bg-green-50 hover:text-green-700 transition-all"
+                    >
+                        <Bell className="w-5 h-5" />
+                        {unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 text-[10px] font-semibold text-white bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+                                {unreadCount > 9 ? '9+' : unreadCount}
+                            </span>
+                        )}
+                    </button>
 
-                <div className="h-8 w-[1px] bg-gray-100 mx-1 hidden sm:block"></div>
+                    {isNotificationOpen && (
+                        <Notification
+                            notifications={notifications}
+                            onNotificationClick={(id) => markAsRead(id)}
+                            onMarkAllRead={markAllAsRead}
+                            onClearAll={clearAll}
+                        />
+                    )}
+                </div>
+
+                <div className="h-8 w-[1px] bg-green-100 mx-1 hidden sm:block"></div>
 
                 {/* Profile Section */}
-                <button className="flex items-center gap-3 p-1 rounded-xl hover:bg-gray-50 transition-all group text-left">
+                <button className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-green-50 transition-all group text-left border border-transparent hover:border-green-100">
                     <img 
-                        src="https://i.pravatar.cc/40" 
+                        src={resolvedImage}
                         alt="User" 
-                        className="w-9 h-9 rounded-xl object-cover shadow-sm border border-gray-100" 
+                        className="w-9 h-9 rounded-xl object-cover shadow-sm border border-green-100" 
                     />
                     <div className="hidden md:block">
-                        <p className="text-sm font-semibold text-gray-800 leading-tight">
+                        <p className="text-sm font-semibold text-[#1a2f22] leading-tight">
                             {storedName}
                         </p>
-                        <p className="text-[11px] text-gray-400">Student Account</p>
+                        <p className="text-[11px] text-slate-500">{storedRole} Account</p>
                     </div>
-                    <ChevronDown className="w-4 h-4 text-gray-400 hidden md:block group-hover:text-gray-600 transition-colors" />
+                    {/* <ChevronDown className="w-4 h-4 text-slate-400 hidden md:block group-hover:text-green-700 transition-colors" /> */}
                 </button>
 
             </div>

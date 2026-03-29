@@ -21,7 +21,7 @@ function Budgets() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-screen ss-app-bg overflow-hidden">
       
       {/* 1. Fixed Sidebar */}
       <Sidebar />
@@ -35,89 +35,55 @@ function Budgets() {
         </div>
     
         {/* 3. Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto" style={{
-          padding: "30px",
-          background: "#f3f4f6",
-        }}>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
 
-          <h1 style={{ marginBottom: "20px", fontWeight: "bold", fontSize: "30px" }}>
+          <h1 className="ss-title text-3xl mb-5">
             Budgets
           </h1>
 
           {/* Budget Cards Grid */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))",
-            gap: "20px"
-          }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
             {budgets.map((item, index) => {
               const percent = Math.round((item.spent / item.total) * 100);
               const color = getColor(percent);
 
               return (
-                <div key={index} style={{
-                  background: "white",
-                  padding: "20px",
-                  borderRadius: "12px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-                }}>
+                <div key={index} className="ss-card p-5">
 
                   {/* Card Header: Title & Info */}
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                  }}>
+                  <div className="flex justify-between items-center">
                     <div>
-                      <h3 className="font-bold text-gray-800 text-lg">{item.title}</h3>
-                      <p style={{ color: "#6b7280" }}>
+                      <h3 className="font-bold text-[#173122] text-lg">{item.title}</h3>
+                      <p className="text-slate-500 text-sm">
                         Spent ₹{item.spent.toLocaleString()} of ₹{item.total.toLocaleString()}
                       </p>
                     </div>
 
                     {/* Circular Progress Indicator */}
-                    <div style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "50%",
-                      background: `conic-gradient(${color} ${percent * 3.6}deg, #e5e7eb 0deg)`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center"
-                    }}>
-                      <div style={{
-                        width: "45px",
-                        height: "45px",
-                        borderRadius: "50%",
-                        background: "white",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "12px",
-                        fontWeight: "bold"
-                      }}>
+                    <div
+                      className="w-[60px] h-[60px] rounded-full flex items-center justify-center"
+                      style={{
+                        background: `conic-gradient(${color} ${percent * 3.6}deg, #e5e7eb 0deg)`
+                      }}
+                    >
+                      <div className="w-[45px] h-[45px] rounded-full bg-white flex items-center justify-center text-[12px] font-bold text-slate-600">
                         {percent}%
                       </div>
                     </div>
                   </div>
 
                   {/* Horizontal Progress Bar */}
-                  <div style={{
-                    marginTop: "15px",
-                    width: "100%",
-                    height: "10px",
-                    background: "#e5e7eb",
-                    borderRadius: "10px",
-                    overflow: "hidden"
-                  }}>
-                    <div style={{
-                      width: Math.min(percent, 100) + "%",
-                      height: "100%",
-                      background: color,
-                      borderRadius: "10px",
-                      transition: "width 0.5s ease-in-out"
-                    }}></div>
+                  <div className="mt-4 w-full h-[10px] bg-slate-200 rounded-[10px] overflow-hidden">
+                    <div
+                      style={{
+                        width: Math.min(percent, 100) + "%",
+                        height: "100%",
+                        background: color,
+                        borderRadius: "10px",
+                        transition: "width 0.5s ease-in-out"
+                      }}
+                    ></div>
                   </div>
 
                 </div>

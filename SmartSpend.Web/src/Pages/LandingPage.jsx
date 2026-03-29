@@ -1,186 +1,146 @@
-import { Receipt, BarChart3, Wallet } from "lucide-react";
+import { Receipt, BarChart3, Wallet, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
-
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white min-h-screen">
-
+    <div className="bg-slate-50 min-h-screen font-sans selection:bg-green-100 selection:text-green-900">
+      
       {/* NAVBAR */}
-      <nav className="flex justify-between items-center px-10 py-6 shadow-sm">
+      <nav className="sticky top-0 z-50 flex justify-between items-center px-6 md:px-16 py-4 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div className="flex items-center gap-2">
+          <div className="bg-green-600 p-1.5 rounded-lg">
+            <Wallet className="text-white" size={20} />
+          </div>
+          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+            SmartSpend
+          </h1>
+        </div>
 
-        <h1 className="text-2xl font-bold text-blue-600">
-          SmartSpend
-        </h1>
-
-        <div className="flex gap-8 items-center">
-
-          <a href="#features" className="text-gray-600 hover:text-blue-600">
-            Features
-          </a>
-
-          <a href="#how" className="text-gray-600 hover:text-blue-600">
-            How it works
-          </a>
-
+        <div className="hidden md:flex gap-10 items-center">
+          <a href="#features" className="text-sm font-medium text-slate-600 hover:text-green-600 transition-colors">Features</a>
+          <a href="#how" className="text-sm font-medium text-slate-600 hover:text-green-600 transition-colors">How it works</a>
           <button
             onClick={() => navigate("/login")}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-all active:scale-95 shadow-sm"
           >
-            Login
+            Sign In
           </button>
-
         </div>
-
       </nav>
 
-
       {/* HERO SECTION */}
-      <section className="text-center px-10 py-28 bg-gray-50">
-
-        <h1 className="text-5xl font-bold text-gray-800 mb-6">
-          Track Your Expenses Smarter
-        </h1>
-
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-          Upload receipts, monitor spending, and manage your finances
-          effortlessly with SmartSpend — your intelligent expense tracker.
-        </p>
-
-        <button
-          onClick={() => navigate("/login")}
-          className="bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-blue-700 hover:scale-105 transition duration-300 shadow-md"
-        >
-          Get Started
-        </button>
-
-      </section>
-
-
-      {/* DASHBOARD PREVIEW IMAGE */}
-      <section className="flex justify-center px-10 pb-24">
-
-        <div className="shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition duration-300">
-
-          <img
-            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71"
-            alt="Dashboard Preview"
-            className="w-[750px]"
-          />
-
+      <section className="relative pt-20 pb-16 px-6 text-center overflow-hidden">
+        {/* Background Blur Orbs */}
+        <div className="absolute top-0 -z-10 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-green-100/50 blur-[120px] rounded-full" />
+        
+        <div className="max-w-4xl mx-auto">
+          <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium text-green-700 bg-green-50 rounded-full border border-green-100">
+            New: AI-Powered Receipt Scanning ✨
+          </span>
+          <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 mb-8 tracking-tight">
+            Master your money with <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-500">intelligence.</span>
+          </h1>
+          <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Stop manual entry. Upload receipts and let our AI categorize your spending so you can focus on reaching your financial goals.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button
+              onClick={() => navigate("/login")}
+              className="group bg-green-600 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:bg-green-700 transition-all hover:shadow-xl hover:shadow-green-200 flex items-center gap-2"
+            >
+              Start Free Trial
+              <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+            </button>
+            <button className="px-8 py-4 text-slate-600 font-semibold hover:text-slate-900 transition-colors">
+              Watch Demo
+            </button>
+          </div>
         </div>
-
       </section>
 
+      {/* DASHBOARD PREVIEW */}
+      <section className="px-6 pb-20">
+        <div className="max-w-6xl mx-auto p-2 bg-white rounded-[2.5rem] shadow-2xl border border-slate-100">
+          <div className="rounded-[2rem] overflow-hidden border border-slate-50">
+            <img
+              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71"
+              alt="Dashboard Preview"
+              className="w-full h-auto object-cover"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* FEATURES */}
-      <section id="features" className="py-20 px-10 bg-gray-50">
-
-        <h2 className="text-3xl font-bold text-center mb-14">
-          Powerful Features
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-10">
-
-          <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition text-center">
-
-            <Receipt className="mx-auto mb-4 text-blue-600" size={40} />
-
-            <h3 className="text-xl font-semibold mb-2">
-              Upload Receipts
-            </h3>
-
-            <p className="text-gray-600">
-              Upload receipts instantly and track expenses automatically.
-            </p>
-
+      <section id="features" className="py-24 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Powerful Features</h2>
+            <p className="text-slate-500">Everything you need to manage personal or business finances.</p>
           </div>
 
-
-          <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition text-center">
-
-            <BarChart3 className="mx-auto mb-4 text-blue-600" size={40} />
-
-            <h3 className="text-xl font-semibold mb-2">
-              Spending Insights
-            </h3>
-
-            <p className="text-gray-600">
-              Understand your spending patterns with visual analytics.
-            </p>
-
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: <Receipt size={32} />, title: "Auto-Extraction", desc: "Just snap a photo. Our AI reads prices, dates, and merchants instantly." },
+              { icon: <BarChart3 size={32} />, title: "Rich Analytics", desc: "Interactive charts help you visualize where every dollar goes." },
+              { icon: <CheckCircle2 size={32} />, title: "Budget Alerts", desc: "Get notified before you overspend in your favorite categories." }
+            ].map((feature, i) => (
+              <div key={i} className="group p-10 rounded-3xl bg-slate-50 border border-transparent hover:border-green-200 hover:bg-white transition-all duration-300">
+                <div className="text-green-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
           </div>
-
-
-          <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition text-center">
-
-            <Wallet className="mx-auto mb-4 text-blue-600" size={40} />
-
-            <h3 className="text-xl font-semibold mb-2">
-              Budget Tracking
-            </h3>
-
-            <p className="text-gray-600">
-              Stay within your budget and manage your finances easily.
-            </p>
-
-          </div>
-
         </div>
-
       </section>
-
 
       {/* HOW IT WORKS */}
-      <section id="how" className="py-20 px-10 text-center">
-
-        <h2 className="text-3xl font-bold mb-14">
-          How SmartSpend Works
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-
-          <div>
-            <h3 className="text-xl font-semibold mb-2">
-              Upload Receipt
-            </h3>
-            <p className="text-gray-600">
-              Upload your receipt photo in seconds.
-            </p>
+      <section id="how" className="py-24 px-6 bg-slate-50">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-slate-900">Simple 3-Step Setup</h2>
+          <div className="grid md:grid-cols-3 gap-12 relative">
+            {[
+              { step: "01", title: "Upload", desc: "Take a picture of any paper or digital receipt." },
+              { step: "02", title: "Process", desc: "Our AI extracts the data and categorizes it." },
+              { step: "03", title: "Review", desc: "See your updated budget and insights in real-time." }
+            ].map((item, i) => (
+              <div key={i} className="relative text-center">
+                <span className="text-6xl font-black text-green-100 absolute -top-10 left-1/2 -translate-x-1/2 -z-0">
+                  {item.step}
+                </span>
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold mb-3 text-slate-900">{item.title}</h3>
+                  <p className="text-slate-600">{item.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <div>
-            <h3 className="text-xl font-semibold mb-2">
-              AI Extracts Data
-            </h3>
-            <p className="text-gray-600">
-              Smart AI extracts merchant and expense details.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-xl font-semibold mb-2">
-              Track Spending
-            </h3>
-            <p className="text-gray-600">
-              Monitor expenses through your dashboard.
-            </p>
-          </div>
-
         </div>
-
       </section>
 
-
       {/* FOOTER */}
-      <footer className="text-center py-10 text-gray-500 border-t">
-
-        SmartSpend © 2026
-
+      <footer className="py-12 border-t border-slate-200 bg-white">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="bg-slate-900 p-1 rounded-md">
+              <Wallet className="text-white" size={16} />
+            </div>
+            <span className="font-bold text-slate-900">SmartSpend</span>
+          </div>
+          <p className="text-slate-400 text-sm">
+            © 2026 SmartSpend. All rights reserved.
+          </p>
+          <div className="flex gap-6 text-sm font-medium text-slate-500">
+            <a href="#" className="hover:text-slate-900">Privacy</a>
+            <a href="#" className="hover:text-slate-900">Terms</a>
+          </div>
+        </div>
       </footer>
-
     </div>
   );
 }

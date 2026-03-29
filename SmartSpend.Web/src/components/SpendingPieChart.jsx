@@ -12,7 +12,7 @@ const pieData = [
   { name: "Travel", value: 6000 },
 ];
 
-const COLORS = ["#22c55e", "#6366f1", "#f59e0b"];
+const COLORS = ["#22c55e", "#86efac", "#4ade80"];
 
 function SpendingPieChart() {
   return (

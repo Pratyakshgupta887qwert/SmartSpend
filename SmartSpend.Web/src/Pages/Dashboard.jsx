@@ -29,29 +29,29 @@ function Dashboard() {
   }, [location]);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen ss-app-bg">
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
         <Navbar />
 
-        <div className="p-6 bg-[#f5f7fb] min-h-screen overflow-y-auto">
+        <div className="p-4 md:p-6 min-h-screen overflow-y-auto">
 
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
             {/* LEFT */}
-            <div className="col-span-2 space-y-6">
+            <div className="xl:col-span-2 space-y-6">
 
               {/* TOP CARDS */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { title: "Income", amount: "$8,500", color: "text-green-500" },
                   { title: "Expense", amount: "$4,900", color: "text-red-500" },
                   { title: "Savings", amount: "$2,000", color: "text-blue-500" },
                   { title: "Investment", amount: "$1,600", color: "text-purple-500" },
                 ].map((item, i) => (
-                  <div key={i} className="bg-white rounded-xl p-4 shadow-sm">
-                    <p className="text-xs text-gray-400">{item.title}</p>
+                  <div key={i} className="ss-card-soft p-4">
+                    <p className="text-xs text-slate-500">{item.title}</p>
                     <h1 className={`text-xl font-bold mt-1 ${item.color}`}>
                       {item.amount}
                     </h1>
@@ -60,14 +60,14 @@ function Dashboard() {
               </div>
 
               {/* EXPENSE OVERVIEW */}
-              <div className="bg-white rounded-xl p-5 shadow-sm">
-                <h2 className="font-semibold mb-4">Expense Overview</h2>
+              <div className="ss-card p-5">
+                <h2 className="ss-title text-lg mb-4">Expense Overview</h2>
                 <ExpenseChart />
               </div>
 
               {/* TRANSACTIONS */}
-              <div className="bg-white rounded-xl p-5 shadow-sm">
-                <h2 className="font-semibold mb-4">Recent Transactions</h2>
+              <div className="ss-card p-5">
+                <h2 className="ss-title text-lg mb-4">Recent Transactions</h2>
 
                 <div className="space-y-3 text-sm">
                   {[
@@ -75,12 +75,12 @@ function Dashboard() {
                     { name: "Zara", category: "Shopping", amount: "$1200" },
                     { name: "Uber", category: "Travel", amount: "$680" },
                   ].map((item, i) => (
-                    <div key={i} className="flex justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={i} className="flex justify-between p-3 rounded-lg border border-green-100/70 bg-green-50/40">
                       <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-xs text-gray-400">{item.category}</p>
+                        <p className="font-semibold text-[#183121]">{item.name}</p>
+                        <p className="text-xs text-slate-500">{item.category}</p>
                       </div>
-                      <p className="font-semibold">{item.amount}</p>
+                      <p className="font-semibold text-[#14281b]">{item.amount}</p>
                     </div>
                   ))}
                 </div>
@@ -92,20 +92,20 @@ function Dashboard() {
             <div className="space-y-6">
 
               {/* PIE */}
-              <div className="bg-white rounded-xl p-5 shadow-sm">
-                <h2 className="font-semibold mb-4">Spending Breakdown</h2>
+              <div className="ss-card p-5">
+                <h2 className="ss-title text-lg mb-4">Spending Breakdown</h2>
                 <SpendingPieChart />
               </div>
 
               {/* AI INSIGHTS */}
-              <div className="bg-white rounded-xl p-5 shadow-sm">
-                <h2 className="font-semibold mb-4">AI Insights</h2>
+              <div className="ss-card p-5">
+                <h2 className="ss-title text-lg mb-4">AI Insights</h2>
 
                 <div className="space-y-3 text-sm">
-                  <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="p-3 rounded-lg border border-green-100 bg-green-50/50 text-[#173122]">
                     📈 Food spending increased ₹1000
                   </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="p-3 rounded-lg border border-green-100 bg-green-50/50 text-[#173122]">
                     💡 Save ₹2000 next month
                   </div>
                 </div>
