@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
-import { Bell, ChevronDown } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Bell } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Notification from './Notification';
+import { useNotifications } from '../context/NotificationContext';
 
 function Navbar() {
     const location = useLocation();
     const navigate = useNavigate();
     const apiBaseUrl = "https://localhost:5030";
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotifications();
 
     // 1. Retrieve the stored name (Fallback to 'User' if empty)
     const storedName = localStorage.getItem("userName") || "User";
@@ -50,10 +54,28 @@ function Navbar() {
             <div className="flex items-center gap-2 sm:gap-4">
                 
                 {/* Notification Bell */}
-                <button className="relative p-2 rounded-xl text-slate-500 hover:bg-green-50 hover:text-green-700 transition-all">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
+                <div className="relative">
+                    <button
+                        onClick={() => setIsNotificationOpen((previous) => !previous)}
+                        className="relative p-2 rounded-xl text-slate-500 hover:bg-green-50 hover:text-green-700 transition-all"
+                    >
+                        <Bell className="w-5 h-5" />
+                        {unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 text-[10px] font-semibold text-white bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+                                {unreadCount > 9 ? '9+' : unreadCount}
+                            </span>
+                        )}
+                    </button>
+
+                    {isNotificationOpen && (
+                        <Notification
+                            notifications={notifications}
+                            onNotificationClick={(id) => markAsRead(id)}
+                            onMarkAllRead={markAllAsRead}
+                            onClearAll={clearAll}
+                        />
+                    )}
+                </div>
 
                 <div className="h-8 w-[1px] bg-green-100 mx-1 hidden sm:block"></div>
 

@@ -3,12 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import { useNotifications } from "../context/NotificationContext";
 import "./Setting.css";
 
 function Setting() {
 	const apiBaseUrl = "https://localhost:5030";
 	const roleOptions = ["User", "Student", "Business"];
 	const navigate = useNavigate();
+	const { addNotification } = useNotifications();
 	const [form, setForm] = useState({ name: "", email: "", role: "User" });
 	const [initialForm, setInitialForm] = useState({ name: "", email: "", role: "User" });
 	const [firstLoginAt, setFirstLoginAt] = useState("");
@@ -151,7 +153,13 @@ function Setting() {
 			setForm(updatedForm);
 			setInitialForm(updatedForm);
 			localStorage.setItem("userRole", updatedForm.role);
-			setSuccess(response.data?.message || "Profile updated successfully");
+			const successMessage = response.data?.message || "Profile updated successfully";
+			setSuccess(successMessage);
+			addNotification({
+				title: "Profile updated",
+				message: "Your name, email, or role details were updated successfully.",
+				type: "success",
+			});
 		} catch (saveError) {
 			const message = saveError.response?.data || "Unable to save profile changes";
 			setError(message);
@@ -193,7 +201,13 @@ function Setting() {
 				localStorage.setItem("userImage", nextImage);
 			}
 
-			setSuccess(response.data?.message || "Profile image uploaded successfully");
+			const successMessage = response.data?.message || "Profile image uploaded successfully";
+			setSuccess(successMessage);
+			addNotification({
+				title: "Profile photo updated",
+				message: "Your display picture has been updated successfully.",
+				type: "success",
+			});
 		} catch (uploadError) {
 			const message = uploadError.response?.data || "Unable to upload profile image";
 			setError(message);

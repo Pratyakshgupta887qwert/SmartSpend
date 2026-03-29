@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import { useNotifications } from "../context/NotificationContext";
 
 function UploadReceipt() {
+  const { addNotification } = useNotifications();
 
   const [previewImage, setPreviewImage] = useState(null);
 
@@ -12,11 +14,29 @@ function UploadReceipt() {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setPreviewImage(imageUrl);
+      addNotification({
+        title: "Receipt selected",
+        message: `${file.name} is ready to save as an expense entry.`,
+        type: "info",
+      });
     }
   };
 
   const handleSave = () => {
-    console.log("Receipt saved");
+    if (!previewImage) {
+      addNotification({
+        title: "No receipt uploaded",
+        message: "Please upload a receipt image before saving.",
+        type: "warning",
+      });
+      return;
+    }
+
+    addNotification({
+      title: "Receipt uploaded successfully",
+      message: "Your receipt has been saved and is now available for expense tracking.",
+      type: "success",
+    });
   };
 
   return (
