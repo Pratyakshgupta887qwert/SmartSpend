@@ -1,0 +1,35 @@
+remote: error: GH013: Repository rule violations found for refs/heads/kanishka.        
+remote: 
+remote: - GITHUB PUSH PROTECTION        
+remote:   —————————————————————————————————————————        
+remote:     Resolve the following violations before pushing again        
+remote: 
+remote:     - Push cannot contain secrets        
+remote: 
+remote:             
+remote:      (?) Learn how to resolve a blocked push        
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push        
+remote:             
+remote:             
+remote:       —— Google OAuth Client ID ————————————————————————————        
+remote:        locations:        
+remote:          - commit: 2491203aca6cfe339518eecd3b5d859dd6f59e31        
+remote:            path: SmartSpend.Backend/bin/Debug/net10.0/appsettings.json:8        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/Pratyakshgupta887qwert/SmartSpend/security/secret-scanning/unblock-secret/3CArBU6X2UXyUH5D1OPCqIuYura        
+remote:             
+remote:             
+remote:       —— Google OAuth Client Secret ————————————————————————        
+remote:        locations:        
+remote:          - commit: 2491203aca6cfe339518eecd3b5d859dd6f59e31        
+remote:            path: SmartSpend.Backend/bin/Debug/net10.0/appsettings.json:9        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/Pratyakshgupta887qwert/SmartSpend/security/secret-scanning/unblock-secret/3CArBPaeZekBrJuKGyTRIjmgTvQ        
+remote:             
+remote: 
+remote: 
+To https://github.com/Pratyakshgupta887qwert/SmartSpend.git
+ ! [remote rejected] kanishka -> kanishka (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/Pratyakshgupta887qwert/SmartSpend.git'
