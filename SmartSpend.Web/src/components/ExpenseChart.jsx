@@ -9,13 +9,13 @@ import {
 } from "recharts";
 
 const chartData = [
-  { day: "Jan", expense: 1800 },
-  { day: "Feb", expense: 2400 },
-  { day: "Mar", expense: 2100 },
-  { day: "Apr", expense: 3200 },
-  { day: "May", expense: 2850 },
-  { day: "Jun", expense: 3600 },
-  { day: "Jul", expense: 3480 },
+  { day: "Jan", expense: 0 },
+  { day: "Feb", expense: 0 },
+  { day: "Mar", expense: 0 },
+  { day: "Apr", expense: 0 },
+  { day: "May", expense: 0 },
+  { day: "Jun", expense: 0 },
+  { day: "Jul", expense: 0 },
 ];
 
 function ExpenseChart() {
@@ -51,6 +51,7 @@ function ExpenseChart() {
 
         <Tooltip
           cursor={{ stroke: "#d84843", strokeWidth: 1, strokeDasharray: "3 3" }}
+          formatter={(value) => [`Rs ${value}`, "Expense"]}
           contentStyle={{
             backgroundColor: "#231c1f",
             border: "none",

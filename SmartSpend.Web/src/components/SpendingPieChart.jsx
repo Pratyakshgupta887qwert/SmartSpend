@@ -7,10 +7,10 @@ import {
 } from "recharts";
 
 const pieData = [
-  { name: "Food", value: 200 },
-  { name: "Travel", value: 680 },
-  { name: "Meds", value: 1680 },
-  { name: "School", value: 680 },
+  { name: "Food", value: 0.0001 },
+  { name: "Travel", value: 0.0001 },
+  { name: "Meds", value: 0.0001 },
+  { name: "School", value: 0.0001 },
 ];
 
 const COLORS = ["#d84843", "#2a2628", "#ddd4d1", "#f1b9b6"];
@@ -34,6 +34,7 @@ function SpendingPieChart() {
           ))}
         </Pie>
         <Tooltip
+          formatter={() => ["Rs 0", "Amount"]}
           contentStyle={{
             backgroundColor: "#231c1f",
             border: "none",
