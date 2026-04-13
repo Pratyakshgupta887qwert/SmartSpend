@@ -247,8 +247,9 @@ namespace SmartSpend.Backend.Controllers
         }
 
         [HttpPost("profile-image")]
+        [Consumes("multipart/form-data")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> UploadProfileImage([FromForm] IFormFile image)
+        public async Task<IActionResult> UploadProfileImage(IFormFile image)
         {
             if (image == null || image.Length == 0)
                 return BadRequest("Please upload an image file");
