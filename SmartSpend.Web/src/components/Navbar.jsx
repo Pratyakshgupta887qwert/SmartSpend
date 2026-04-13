@@ -9,6 +9,7 @@ function Navbar() {
     const navigate = useNavigate();
     const apiBaseUrl = "https://localhost:5030";
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotifications();
 
     // 1. Retrieve the stored name (Fallback to 'User' if empty)
@@ -49,8 +50,20 @@ function Navbar() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
+                {isSearchOpen && (
+                    <div className="hidden md:flex items-center rounded-2xl bg-white px-4 py-2 shadow-sm ring-1 ring-black/5">
+                        <Search className="h-4 w-4 text-[#8d8380]" />
+                        <input
+                            type="text"
+                            placeholder="Search expenses, bills, budgets..."
+                            className="ml-3 w-64 bg-transparent text-sm text-[#1b1718] outline-none placeholder:text-[#a89f9c]"
+                        />
+                    </div>
+                )}
+
                 <button
                     type="button"
+                    onClick={() => setIsSearchOpen((previous) => !previous)}
                     className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-[#544d4d] shadow-sm ring-1 ring-black/5 transition hover:text-[#1b1718]"
                 >
                     <Search className="h-4 w-4" />

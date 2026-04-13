@@ -54,11 +54,11 @@ function Dashboard() {
                             Total Balance
                           </p>
                           <p className="mt-1 text-4xl font-bold tracking-tight text-[#1a1516]">
-                            $12,486
+                            Rs 0
                           </p>
                         </div>
                         <span className="mt-3 rounded-full bg-[#d84843] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-                          +5.8%
+                          0.0%
                         </span>
                       </div>
                     </div>
@@ -77,9 +77,9 @@ function Dashboard() {
 
                 <div className="grid grid-cols-1 gap-3 px-4 pb-5 pt-4 md:grid-cols-3 md:px-6">
                   {[
-                    { value: "+4,820", label: "Income", tone: "text-[#494141]" },
-                    { value: "+3,950", label: "Expense", tone: "text-[#d84843]" },
-                    { value: "$12,486", label: "Savings", tone: "text-[#494141]" },
+                    { value: "Rs 0", label: "Income", tone: "text-[#494141]" },
+                    { value: "Rs 0", label: "Expense", tone: "text-[#d84843]" },
+                    { value: "Rs 0", label: "Savings", tone: "text-[#494141]" },
                   ].map((item, i) => (
                     <div
                       key={i}
@@ -108,36 +108,36 @@ function Dashboard() {
                       {
                         badge: "D",
                         name: "Dribbble",
-                        meta: "Apr 18 · 11:37 AM",
-                        amount: "-$10.67",
+                        meta: "Apr 18 | 11:37 AM",
+                        amount: "Rs 0",
                         color: "bg-[#2d2729]",
                       },
                       {
                         badge: "N",
                         name: "Netflix",
-                        meta: "Apr 17 · 7:50 PM",
-                        amount: "-$15.99",
+                        meta: "Apr 17 | 7:50 PM",
+                        amount: "Rs 0",
                         color: "bg-[#d84843]",
                       },
                       {
                         badge: "A",
                         name: "Airbnb",
-                        meta: "Apr 15 · 9:45 PM",
-                        amount: "-$112.43",
+                        meta: "Apr 15 | 9:45 PM",
+                        amount: "Rs 0",
                         color: "bg-[#393033]",
                       },
                       {
                         badge: "S",
                         name: "Spotify",
-                        meta: "Apr 14 · 10:15 PM",
-                        amount: "-$9.99",
+                        meta: "Apr 14 | 10:15 PM",
+                        amount: "Rs 0",
                         color: "bg-[#1db954]",
                       },
                       {
                         badge: "N",
                         name: "Note",
-                        meta: "Apr 14 · 7:57 AM",
-                        amount: "-$15.99",
+                        meta: "Apr 14 | 7:57 AM",
+                        amount: "Rs 0",
                         color: "bg-[#f1d8d7] text-[#c54441]",
                       },
                     ].map((item, i) => (
@@ -174,10 +174,10 @@ function Dashboard() {
 
                   <div className="space-y-3">
                     {[
-                      ["Figma", "Apr 20 · 7:59", "$15.99", "bg-[#f24e1e]"],
-                      ["YouTube", "Apr 20 · 7:59", "$12.99", "bg-[#ff0000]"],
-                      ["Spotify", "Jun 20 · 6:59", "$2.99", "bg-[#1db954]"],
-                      ["Telegram", "May 20 · 09:00", "$3.99", "bg-[#229ed9]"],
+                      ["Figma", "Apr 20 | 7:59", "Rs 0", "bg-[#f24e1e]"],
+                      ["YouTube", "Apr 20 | 7:59", "Rs 0", "bg-[#ff0000]"],
+                      ["Spotify", "Jun 20 | 6:59", "Rs 0", "bg-[#1db954]"],
+                      ["Telegram", "May 20 | 09:00", "Rs 0", "bg-[#229ed9]"],
                     ].map(([name, meta, amount, color], i) => (
                       <div
                         key={i}
@@ -210,10 +210,10 @@ function Dashboard() {
 
                 <div className="mt-4 space-y-3 text-sm">
                   {[
-                    ["Food", "$200", "bg-[#d84843]"],
-                    ["Travel", "$680", "bg-[#2a2628]"],
-                    ["Meds", "$1680", "bg-[#ddd4d1]"],
-                    ["School", "$680", "bg-[#f1b9b6]"],
+                    ["Food", "Rs 0", "bg-[#d84843]"],
+                    ["Travel", "Rs 0", "bg-[#2a2628]"],
+                    ["Meds", "Rs 0", "bg-[#ddd4d1]"],
+                    ["School", "Rs 0", "bg-[#f1b9b6]"],
                   ].map(([name, amount, color], i) => (
                     <div key={i} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">

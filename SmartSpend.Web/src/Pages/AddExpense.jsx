@@ -191,11 +191,11 @@ function AddExpense() {
                         </div>
                       )}
 
-                      <div className="mt-4 rounded-2xl bg-[#f6f1ee] px-4 py-3 text-sm text-[#4b4343]">
+                      {/* <div className="mt-4 rounded-2xl bg-[#f6f1ee] px-4 py-3 text-sm text-[#4b4343]">
                         <span className="mr-2 text-[#ffb648]">+</span>
                         AI detected: {uploadCategory || "Food"} &nbsp; Rs 540
                         &nbsp; Today
-                      </div>
+                      </div>  */}
                     </div>
 
                     <button
