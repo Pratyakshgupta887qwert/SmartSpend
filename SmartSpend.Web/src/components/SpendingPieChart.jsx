@@ -7,23 +7,44 @@ import {
 } from "recharts";
 
 const pieData = [
-  { name: "Food", value: 12000 },
-  { name: "Shopping", value: 8000 },
-  { name: "Travel", value: 6000 },
+  { name: "Food", value: 0.0001 },
+  { name: "Travel", value: 0.0001 },
+  { name: "Meds", value: 0.0001 },
+  { name: "School", value: 0.0001 },
 ];
 
-const COLORS = ["#22c55e", "#86efac", "#4ade80"];
+const COLORS = ["#d84843", "#2a2628", "#ddd4d1", "#f1b9b6"];
 
 function SpendingPieChart() {
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height={220}>
       <PieChart>
-        <Pie data={pieData} dataKey="value" innerRadius={50} outerRadius={80}>
+        <Pie
+          data={pieData}
+          dataKey="value"
+          cx="50%"
+          cy="50%"
+          innerRadius={52}
+          outerRadius={82}
+          paddingAngle={3}
+          stroke="none"
+        >
           {pieData.map((_, i) => (
             <Cell key={i} fill={COLORS[i]} />
           ))}
         </Pie>
-        <Tooltip />
+        <Tooltip
+          formatter={() => ["Rs 0", "Amount"]}
+          contentStyle={{
+            backgroundColor: "#231c1f",
+            border: "none",
+            borderRadius: "16px",
+            color: "#fff",
+            boxShadow: "0 16px 40px rgba(0,0,0,0.18)",
+          }}
+          labelStyle={{ color: "#f4e9e6", fontWeight: 600 }}
+          itemStyle={{ color: "#ff8d88" }}
+        />
       </PieChart>
     </ResponsiveContainer>
   );
