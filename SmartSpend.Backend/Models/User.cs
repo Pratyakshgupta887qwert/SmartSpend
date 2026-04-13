@@ -4,9 +4,9 @@ public class User
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
     public string? PasswordHash { get; set; }
 
@@ -19,4 +19,10 @@ public class User
     public string? ProfileImageUrl { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
+
+    public ICollection<Budget> Budgets { get; set; } = new List<Budget>();
+
+    public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
 }
