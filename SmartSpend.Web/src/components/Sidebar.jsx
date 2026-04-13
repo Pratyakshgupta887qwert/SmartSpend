@@ -53,15 +53,13 @@ function Sidebar() {
           <span className="hidden md:block">Budget</span>
         </NavLink>
 
-        <NavLink
-          to="/uploadreceipt"
-          className={({ isActive }) =>
-            `${baseClass} ${isActive ? activeClass : inactiveClass}`
-          }
+        <button
+          type="button"
+          className={`${baseClass} ${inactiveClass} w-full`}
         >
           <BrainCircuit size={18} />
           <span className="hidden md:block">AI Insights</span>
-        </NavLink>
+        </button>
 
         <NavLink
           to="/settings"
@@ -73,13 +71,15 @@ function Sidebar() {
           <span className="hidden md:block">Pulse</span>
         </NavLink>
 
-        <button
-          type="button"
-          className={`${baseClass} ${inactiveClass} w-full`}
+        <NavLink
+          to="/uploadreceipt"
+          className={({ isActive }) =>
+            `${baseClass} ${isActive ? activeClass : inactiveClass}`
+          }
         >
           <PlusCircle size={18} />
           <span className="hidden md:block">Add Expense</span>
-        </button>
+        </NavLink>
       </nav>
 
       <div className="mt-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-4">
