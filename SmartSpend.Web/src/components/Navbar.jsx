@@ -41,9 +41,9 @@ function Navbar() {
     return (
         <nav className="sticky top-0 z-10 flex h-20 w-full items-center justify-between border-b border-black/5 bg-[#f6f1ee]/90 px-5 backdrop-blur md:px-8">
             <div className="min-w-0">
-                <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-[#a79d98]">
+                {/* <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-[#a79d98]">
                     Good Morning
-                </p>
+                </p> */}
                 <h1 className="truncate text-lg font-semibold tracking-tight text-[#1b1718] md:text-2xl">
                     {displayTitle}
                 </h1>

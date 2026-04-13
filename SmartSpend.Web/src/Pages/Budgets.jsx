@@ -45,7 +45,7 @@ function Budgets() {
                   Export Report
                 </button>
                 <button className="rounded-2xl bg-[#d84843] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_-18px_rgba(216,72,67,0.95)] transition hover:bg-[#cc3f3b]">
-                  Add Category
+                  Adjust Budget
                 </button>
               </div>
             </div>
