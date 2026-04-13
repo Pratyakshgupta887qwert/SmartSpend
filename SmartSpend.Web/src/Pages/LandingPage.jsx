@@ -2,14 +2,17 @@ import {
   ArrowRight,
   BarChart3,
   ChevronRight,
+  X,
   Menu,
   Receipt,
   Wallet,
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#f4efec] font-sans text-slate-900 selection:bg-red-200 selection:text-slate-900">
@@ -51,14 +54,47 @@ function LandingPage() {
 
           <button
             type="button"
+            onClick={() => setIsMenuOpen((previous) => !previous)}
             className="rounded-xl border border-white/10 p-2 text-white md:hidden"
             aria-label="Open navigation"
+            aria-expanded={isMenuOpen}
           >
-            <Menu className="h-5 w-5" />
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </nav>
 
-        <div className="mx-auto grid w-full max-w-6xl gap-14 px-4 pb-16 pt-6 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-10">
+        {isMenuOpen && (
+          <div className="mx-4 mb-4 rounded-2xl border border-white/10 bg-white/5 p-4 md:hidden">
+            <div className="flex flex-col gap-3 text-sm text-white/85">
+              <a href="#products" onClick={() => setIsMenuOpen(false)} className="rounded-lg px-2 py-1.5 transition hover:bg-white/10">
+                Products
+              </a>
+              <a href="#features" onClick={() => setIsMenuOpen(false)} className="rounded-lg px-2 py-1.5 transition hover:bg-white/10">
+                For companies
+              </a>
+              <a href="#resources" onClick={() => setIsMenuOpen(false)} className="rounded-lg px-2 py-1.5 transition hover:bg-white/10">
+                Resources
+              </a>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => navigate("/login")}
+                className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+              >
+                Sign in
+              </button>
+              <button
+                onClick={() => navigate("/login")}
+                className="rounded-xl bg-[#f2ebe6] px-4 py-2 text-sm font-semibold text-[#9f2f2c] transition hover:bg-white"
+              >
+                Sign up
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 pb-16 pt-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:px-8 lg:pb-24 lg:pt-10">
           <div className="relative">
             <div className="absolute left-0 top-8 h-40 w-40 rounded-full bg-[#c53a37]/20 blur-3xl" />
             <div className="absolute left-24 top-24 h-52 w-52 rounded-full bg-[#8e2d2b]/20 blur-3xl" />
@@ -68,7 +104,7 @@ function LandingPage() {
             </span>
 
             <div className="relative mt-8 max-w-xl">
-              <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
                 Smarter Finance,
                 <br />
                 Made Simple
@@ -99,7 +135,7 @@ function LandingPage() {
             <div className="absolute right-0 top-8 h-56 w-56 rounded-full bg-[#c53a37]/20 blur-3xl" />
 
             <div className="relative w-full max-w-[460px]">
-              <div className="absolute right-6 top-0 z-20 w-[58%] rounded-[2rem] border border-[#e9ddd7] bg-[#f7f1ed] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.28)] sm:p-5">
+              <div className="absolute right-3 top-0 z-20 w-[60%] rounded-[2rem] border border-[#e9ddd7] bg-[#f7f1ed] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.28)] sm:right-6 sm:w-[58%] sm:p-5">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="h-3 w-3 rounded-full bg-[#c53a37]" />
@@ -341,7 +377,7 @@ function LandingPage() {
             </article>
           </div>
 
-          <section className="mt-14 rounded-[2rem] bg-[#efe6e1] px-6 py-8 shadow-[0_18px_50px_rgba(15,23,42,0.05)] sm:px-8">
+          <section className="mt-14 rounded-[2rem] bg-[#efe6e1] px-5 py-8 shadow-[0_18px_50px_rgba(15,23,42,0.05)] sm:px-8">
             <div className="max-w-4xl">
               <h2 className="text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
                 Gain insights on your budget

@@ -19,8 +19,8 @@ function Notification({
   onClearAll,
 }) {
   return (
-    <div className="absolute right-0 mt-3 w-[22rem] max-w-[92vw] rounded-2xl border border-green-100 bg-white shadow-xl z-50 overflow-hidden">
-      <div className="px-4 py-3 border-b border-green-100 flex items-center justify-between bg-green-50/60">
+    <div className="absolute right-0 mt-3 w-[22rem] max-w-[92vw] overflow-hidden rounded-2xl border border-[#e6ece8] bg-white shadow-[0_24px_45px_-28px_rgba(15,23,42,0.55)] z-50">
+      <div className="flex items-center justify-between border-b border-[#e6ece8] bg-[#f3f8f5] px-4 py-3">
         <div>
           <h3 className="text-sm font-bold text-[#163122]">Notifications</h3>
           <p className="text-[11px] text-slate-500">Your recent activity updates</p>
@@ -57,7 +57,7 @@ function Notification({
               key={item.id}
               type="button"
               onClick={() => onNotificationClick(item.id)}
-              className={`w-full text-left px-4 py-3 border-b border-slate-100 hover:bg-green-50/40 transition ${
+              className={`w-full border-b border-slate-100 px-4 py-3 text-left transition hover:bg-green-50/40 ${
                 item.read ? "bg-white" : "bg-green-50/70"
               }`}
             >

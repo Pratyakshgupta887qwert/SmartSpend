@@ -55,13 +55,13 @@ function AddExpense() {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[#f6f1ee]">
         <Navbar />
 
-        <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-6">
           <div className="mx-auto max-w-7xl">
             <div className="overflow-hidden rounded-[30px] bg-white shadow-[0_24px_60px_-30px_rgba(15,23,42,0.28)] ring-1 ring-black/5">
               <div className="flex items-center gap-4 border-b border-[#ece4e0] px-5 py-5 md:px-8">
                 <button
                   type="button"
-                  className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f6f1ee] text-xl text-[#5e5554]"
+                  className="ss-lift flex h-10 w-10 items-center justify-center rounded-2xl bg-[#f6f1ee] text-xl text-[#5e5554] transition hover:bg-[#efe7e3]"
                 >
                   &#8249;
                 </button>
@@ -134,7 +134,7 @@ function AddExpense() {
                           type="text"
                           value={uploadDescription}
                           onChange={(e) => setUploadDescription(e.target.value)}
-                          className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843]"
+                          className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
                           placeholder="Dinner at an Italian restaurant"
                         />
                       </div>
@@ -146,7 +146,7 @@ function AddExpense() {
                         <select
                           value={uploadCategory}
                           onChange={(e) => setUploadCategory(e.target.value)}
-                          className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843]"
+                          className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
                         >
                           <option value="">Select Category</option>
                             <option value="Food & Dining">Food & Dining🍔</option>
@@ -166,7 +166,7 @@ function AddExpense() {
 
                       <button
                         onClick={handleSave}
-                        className="mt-4 rounded-xl bg-[#f3ebea] px-8 py-3 text-lg font-medium text-[#4a4342] transition hover:bg-[#ece2e0]"
+                        className="ss-lift mt-4 rounded-xl bg-[#f3ebea] px-8 py-3 text-lg font-medium text-[#4a4342] transition hover:bg-[#ece2e0]"
                       >
                         Save Draft
                       </button>
@@ -200,7 +200,7 @@ function AddExpense() {
 
                     <button
                       onClick={handleSave}
-                      className="mt-10 rounded-xl bg-[#ff4e45] px-10 py-3 text-lg font-medium text-white shadow-[0_16px_30px_-18px_rgba(255,78,69,0.9)] transition hover:bg-[#f1453d]"
+                      className="ss-lift mt-10 rounded-xl bg-[#ff4e45] px-10 py-3 text-lg font-medium text-white shadow-[0_16px_30px_-18px_rgba(255,78,69,0.9)] transition hover:bg-[#f1453d]"
                     >
                       Submit
                     </button>
@@ -223,7 +223,7 @@ function AddExpense() {
                             type="text"
                             value={manualAmount}
                             onChange={(e) => setManualAmount(e.target.value)}
-                            className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-2xl text-[#1a1516] outline-none transition focus:border-[#d84843]"
+                            className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-2xl text-[#1a1516] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
                           />
                         </div>
 
@@ -235,7 +235,7 @@ function AddExpense() {
                             type="text"
                             value={manualDescription}
                             onChange={(e) => setManualDescription(e.target.value)}
-                            className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843]"
+                            className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
                           />
                         </div>
 
@@ -246,7 +246,7 @@ function AddExpense() {
                           <select
                             value={manualCategory}
                             onChange={(e) => setManualCategory(e.target.value)}
-                            className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843]"
+                            className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
                           >
                             <option value="Food & Dining ">Food & Dining🍔</option>
                             <option value="HealthCare">HealthCare🏥</option>
@@ -271,14 +271,14 @@ function AddExpense() {
                             type="date"
                             value={manualDate}
                             onChange={(e) => setManualDate(e.target.value)}
-                            className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843]"
+                            className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
                           />
                         </div>
                       </div>
 
                       <button
                         onClick={handleSave}
-                        className="mt-8 rounded-xl bg-[#f3ebea] px-8 py-3 text-lg font-medium text-[#4a4342] transition hover:bg-[#ece2e0]"
+                        className="ss-lift mt-8 rounded-xl bg-[#f3ebea] px-8 py-3 text-lg font-medium text-[#4a4342] transition hover:bg-[#ece2e0]"
                       >
                         Save Draft
                       </button>
@@ -330,7 +330,7 @@ function AddExpense() {
 
                     <button
                       onClick={handleSave}
-                      className="mt-10 rounded-xl bg-[#ff4e45] px-10 py-3 text-lg font-medium text-white shadow-[0_16px_30px_-18px_rgba(255,78,69,0.9)] transition hover:bg-[#f1453d]"
+                      className="ss-lift mt-10 rounded-xl bg-[#ff4e45] px-10 py-3 text-lg font-medium text-white shadow-[0_16px_30px_-18px_rgba(255,78,69,0.9)] transition hover:bg-[#f1453d]"
                     >
                       Submit
                     </button>

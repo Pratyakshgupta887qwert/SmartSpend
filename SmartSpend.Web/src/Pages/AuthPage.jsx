@@ -88,13 +88,13 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#fff7f2,_#f7fbf8_42%,_#edf6f1_100%)] px-4 py-6 font-['Manrope'] sm:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-6xl items-center justify-center">
-        <div className="relative grid w-full overflow-hidden rounded-[32px] border border-white/70 bg-white/90 shadow-[0_35px_120px_-45px_rgba(15,23,42,0.45)] backdrop-blur xl:grid-cols-2">
-          <div className="relative min-h-[680px] overflow-hidden bg-[#faf7f5]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#fff7f2,_#f7fbf8_42%,_#edf6f1_100%)] px-3 py-4 font-['Manrope'] sm:px-6 sm:py-6 lg:px-8">
+      <div className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-6xl items-center justify-center sm:min-h-[calc(100vh-3rem)]">
+        <div className="relative grid w-full overflow-hidden rounded-[28px] border border-white/70 bg-white/90 shadow-[0_35px_120px_-45px_rgba(15,23,42,0.45)] backdrop-blur lg:grid-cols-2 lg:rounded-[32px]">
+          <div className="relative min-h-[620px] overflow-hidden bg-[#faf7f5] sm:min-h-[680px]">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(197,58,55,0.08),_transparent_42%)]" />
-            <div className="relative flex h-full flex-col p-6 sm:p-8 lg:p-10">
-              <div className="mb-8 flex items-center justify-between">
+            <div className="relative flex h-full flex-col p-5 sm:p-8 lg:p-10">
+              <div className="mb-6 flex items-center justify-between sm:mb-8">
                 <div className="flex items-center gap-3">
                   <div className="h-9 w-9 rounded-xl bg-[#c53a37]" />
                   <span className="text-lg font-bold tracking-tight text-[#201b1c]">
@@ -121,7 +121,7 @@ function AuthPage() {
                 >
                   <form className="flex h-full flex-col" onSubmit={handleLoginSubmit}>
                     <div>
-                      <h1 className="text-4xl font-bold tracking-tight text-[#201b1c] sm:text-5xl">
+                      <h1 className="text-3xl font-bold tracking-tight text-[#201b1c] sm:text-5xl">
                         Welcome back
                       </h1>
                       <p className="mt-3 max-w-sm text-sm leading-6 text-[#6d6768] sm:text-base">
@@ -129,7 +129,7 @@ function AuthPage() {
                       </p>
                     </div>
 
-                    <div className="mt-10 space-y-5">
+                    <div className="mt-7 space-y-4 sm:mt-10 sm:space-y-5">
                       <div>
                         <label className="mb-2 block text-sm font-semibold text-[#2d2728]">
                           Email
@@ -180,7 +180,7 @@ function AuthPage() {
                       </button>
                     </div>
 
-                    <div className="mt-auto pt-8 text-center text-sm text-[#7a7374] lg:text-left">
+                    <div className="mt-auto pt-7 text-center text-sm text-[#7a7374] lg:text-left">
                       New here?{" "}
                       <button
                         type="button"
@@ -202,7 +202,7 @@ function AuthPage() {
                 >
                   <form className="flex h-full flex-col" onSubmit={handleRegisterSubmit}>
                     <div>
-                      <h1 className="text-4xl font-bold tracking-tight text-[#201b1c] sm:text-5xl">
+                      <h1 className="text-3xl font-bold tracking-tight text-[#201b1c] sm:text-5xl">
                         Get Started
                       </h1>
                       <p className="mt-3 max-w-sm text-sm leading-6 text-[#6d6768] sm:text-base">
@@ -210,7 +210,7 @@ function AuthPage() {
                       </p>
                     </div>
 
-                    <div className="mt-10 space-y-5">
+                    <div className="mt-7 space-y-4 sm:mt-10 sm:space-y-5">
                       <div>
                         <label className="mb-2 block text-sm font-semibold text-[#2d2728]">
                           Full Name
@@ -257,7 +257,7 @@ function AuthPage() {
                       </button>
                     </div>
 
-                    <div className="mt-auto pt-8 text-center text-sm text-[#7a7374] lg:text-left">
+                    <div className="mt-auto pt-7 text-center text-sm text-[#7a7374] lg:text-left">
                       Already have an account?{" "}
                       <button
                         type="button"
@@ -273,7 +273,7 @@ function AuthPage() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden bg-[#f4efec]">
+          <div className="relative hidden overflow-hidden bg-[#f4efec] lg:block">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(50,171,113,0.16),_transparent_34%),radial-gradient(circle_at_bottom_left,_rgba(197,58,55,0.12),_transparent_36%)]" />
             <div className="absolute -bottom-10 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-[#dcd3cf]/70 blur-sm" />
             <div className="absolute bottom-0 right-[-8%] h-64 w-64 rounded-full bg-[#d8cfcb]/70" />
