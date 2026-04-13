@@ -1,33 +1,96 @@
 import { useState } from "react";
+import axios from "axios";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useNotifications } from "../context/NotificationContext";
 
 function AddExpense() {
   const { addNotification } = useNotifications();
+  const apiBaseUrl = "https://localhost:5030";
 
+  const [selectedFile, setSelectedFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [ocrResult, setOcrResult] = useState(null);
   const [isManual, setIsManual] = useState(false);
   const [manualAmount, setManualAmount] = useState("0");
   const [manualDescription, setManualDescription] = useState("");
   const [manualCategory, setManualCategory] = useState("");
   const [manualDate, setManualDate] = useState("");
+  const [uploadAmount, setUploadAmount] = useState("");
   const [uploadDescription, setUploadDescription] = useState(
     "Dinner at an Italian restaurant"
   );
   const [uploadCategory, setUploadCategory] = useState("");
+  const [uploadDate, setUploadDate] = useState("");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
     if (file) {
       const imageUrl = URL.createObjectURL(file);
+      setSelectedFile(file);
       setPreviewImage(imageUrl);
+      setOcrResult(null);
       addNotification({
         title: "Receipt selected",
         message: `${file.name} is ready to save as an expense entry.`,
         type: "info",
       });
+    }
+  };
+
+  const handleScanReceipt = async () => {
+    if (!selectedFile) {
+      addNotification({
+        title: "No receipt selected",
+        message: "Please upload a receipt image before scanning.",
+        type: "warning",
+      });
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      addNotification({
+        title: "Login required",
+        message: "Please login again before scanning receipts.",
+        type: "warning",
+      });
+      return;
+    }
+
+    try {
+      setIsScanning(true);
+      const formData = new FormData();
+      formData.append("receipt", selectedFile);
+
+      const response = await axios.post(`${apiBaseUrl}/api/receipt-ocr/extract`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = response.data;
+      setOcrResult(data);
+      setUploadDescription(data.description || data.merchant || uploadDescription);
+      setUploadCategory(data.category || uploadCategory);
+      setUploadAmount(data.amount ? String(data.amount) : uploadAmount);
+      setUploadDate(data.date || uploadDate);
+
+      addNotification({
+        title: "Receipt scanned",
+        message: "Gemini filled the expense details. Please review them before saving.",
+        type: "success",
+      });
+    } catch (scanError) {
+      addNotification({
+        title: "Gemini scan failed",
+        message: scanError.response?.data || "Unable to read this receipt right now.",
+        type: "error",
+      });
+    } finally {
+      setIsScanning(false);
     }
   };
 
@@ -112,6 +175,7 @@ function AddExpense() {
                         <input
                           type="file"
                           className="hidden"
+                          accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/heif"
                           onChange={handleFileChange}
                         />
 
@@ -126,6 +190,19 @@ function AddExpense() {
                     </div>
 
                     <div className="mt-6 space-y-5">
+                      <div>
+                        <label className="mb-2 block text-lg font-medium text-[#1a1516]">
+                          Amount
+                        </label>
+                        <input
+                          type="text"
+                          value={uploadAmount}
+                          onChange={(e) => setUploadAmount(e.target.value)}
+                          className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
+                          placeholder="Receipt total"
+                        />
+                      </div>
+
                       <div>
                         <label className="mb-2 block text-lg font-medium text-[#1a1516]">
                           Description
@@ -164,6 +241,27 @@ function AddExpense() {
                         </select>
                       </div>
 
+                      <div>
+                        <label className="mb-2 block text-lg font-medium text-[#1a1516]">
+                          Date
+                        </label>
+                        <input
+                          type="date"
+                          value={uploadDate}
+                          onChange={(e) => setUploadDate(e.target.value)}
+                          className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleScanReceipt}
+                        disabled={!selectedFile || isScanning}
+                        className="ss-lift rounded-xl bg-[#ff4e45] px-8 py-3 text-lg font-medium text-white shadow-[0_16px_30px_-18px_rgba(255,78,69,0.9)] transition hover:bg-[#f1453d] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {isScanning ? "Scanning with Gemini..." : "Scan with Gemini"}
+                      </button>
+
                       <button
                         onClick={handleSave}
                         className="ss-lift mt-4 rounded-xl bg-[#f3ebea] px-8 py-3 text-lg font-medium text-[#4a4342] transition hover:bg-[#ece2e0]"
@@ -196,6 +294,13 @@ function AddExpense() {
                         AI detected: {uploadCategory || "Food"} &nbsp; Rs 540
                         &nbsp; Today
                       </div>  */}
+                      {ocrResult && (
+                        <div className="mt-4 rounded-2xl bg-[#f6f1ee] px-4 py-3 text-sm text-[#4b4343]">
+                          <span className="font-semibold text-[#d84843]">Gemini detected:</span>{" "}
+                          {ocrResult.merchant || "Receipt"} - Rs {uploadAmount || "0"} -{" "}
+                          {uploadCategory || "Others"}
+                        </div>
+                      )}
                     </div>
 
                     <button
