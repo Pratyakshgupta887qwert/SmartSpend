@@ -38,20 +38,22 @@ function Navbar() {
         : rawPath.charAt(0).toUpperCase() + rawPath.slice(1);
 
     return (
-        <nav className="sticky top-0 z-10 flex h-20 w-full items-center justify-between border-b border-black/5 bg-[#f6f1ee]/90 px-5 backdrop-blur md:px-8">
+        <nav className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-black/5 bg-[#f6f1ee]/92 px-4 backdrop-blur-xl sm:h-20 sm:px-5 md:px-8">
             <div className="min-w-0">
-                <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-[#a79d98]">
-                    Good Morning
-                </p>
-                <h1 className="truncate text-lg font-semibold tracking-tight text-[#1b1718] md:text-2xl">
-                    {displayTitle}
-                </h1>
+                <div className="min-w-0">
+                    <p className="hidden text-[10px] font-medium uppercase tracking-[0.28em] text-[#a79d98] sm:block">
+                        Good Morning
+                    </p>
+                    <h1 className="truncate text-base font-semibold tracking-tight text-[#1b1718] sm:text-lg md:text-2xl">
+                        {displayTitle}
+                    </h1>
+                </div>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
                 <button
                     type="button"
-                    className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-[#544d4d] shadow-sm ring-1 ring-black/5 transition hover:text-[#1b1718]"
+                    className="ss-lift hidden h-10 w-10 items-center justify-center rounded-2xl bg-white text-[#544d4d] shadow-sm ring-1 ring-black/5 transition hover:bg-[#fcfbfa] hover:text-[#1b1718] sm:flex"
                 >
                     <Search className="h-4 w-4" />
                 </button>
@@ -59,7 +61,7 @@ function Navbar() {
                 <div className="relative">
                     <button
                         onClick={() => setIsNotificationOpen((previous) => !previous)}
-                        className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-[#544d4d] shadow-sm ring-1 ring-black/5 transition hover:text-[#1b1718]"
+                        className="ss-lift relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-[#544d4d] shadow-sm ring-1 ring-black/5 transition hover:bg-[#fcfbfa] hover:text-[#1b1718]"
                     >
                         <Bell className="w-4 h-4" />
                         {unreadCount > 0 && (
@@ -79,7 +81,7 @@ function Navbar() {
                     )}
                 </div>
 
-                <button className="hidden items-center gap-2 rounded-2xl bg-white px-3 py-2 text-left shadow-sm ring-1 ring-black/5 transition hover:bg-white md:flex">
+                <button className="ss-lift hidden items-center gap-2 rounded-2xl bg-white px-3 py-2 text-left shadow-sm ring-1 ring-black/5 transition hover:bg-[#fcfbfa] md:flex">
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#fdf0df] text-[#cf7a22]">
                         <Sparkles className="h-3.5 w-3.5" />
                     </div>
@@ -88,11 +90,11 @@ function Navbar() {
                     </span>
                 </button>
 
-                <button className="flex items-center gap-3 rounded-2xl bg-white px-2.5 py-2 shadow-sm ring-1 ring-black/5 transition hover:bg-white">
+                <button className="ss-lift flex items-center gap-2 rounded-2xl bg-white px-2 py-1.5 shadow-sm ring-1 ring-black/5 transition hover:bg-[#fcfbfa] sm:gap-3 sm:px-2.5 sm:py-2">
                     <img 
                         src={resolvedImage}
                         alt="User" 
-                        className="w-9 h-9 rounded-2xl object-cover border border-[#efe4df]" 
+                        className="h-8 w-8 rounded-xl border border-[#efe4df] object-cover sm:h-9 sm:w-9 sm:rounded-2xl" 
                     />
                     <div className="hidden md:block">
                         <p className="text-sm font-semibold leading-tight text-[#1b1718]">

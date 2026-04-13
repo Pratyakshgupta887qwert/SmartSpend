@@ -21,13 +21,13 @@ function Budgets() {
   };
 
   return (
-    <div className="flex h-screen ss-app-bg overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-[#171214]">
       
       {/* 1. Fixed Sidebar */}
       <Sidebar />
 
       {/* 2. Main Layout Wrapper */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex min-w-0 flex-col bg-[#f6f1ee]">
         
         {/* FIX: This wrapper prevents the Navbar from thinning/shrinking */}
         <div className="shrink-0">
@@ -35,27 +35,27 @@ function Budgets() {
         </div>
     
         {/* 3. Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-6">
 
-          <h1 className="ss-title text-3xl mb-5">
+          <h1 className="mb-5 text-3xl font-bold tracking-tight text-[#1a1516]">
             Budgets
           </h1>
 
           {/* Budget Cards Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
 
             {budgets.map((item, index) => {
               const percent = Math.round((item.spent / item.total) * 100);
               const color = getColor(percent);
 
               return (
-                <div key={index} className="ss-card p-5">
+                <div key={index} className="rounded-[26px] border border-[#efe7e3] bg-white p-5 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_55px_-30px_rgba(15,23,42,0.48)]">
 
                   {/* Card Header: Title & Info */}
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-bold text-[#173122] text-lg">{item.title}</h3>
-                      <p className="text-slate-500 text-sm">
+                      <h3 className="text-lg font-bold text-[#1a1516]">{item.title}</h3>
+                      <p className="text-sm text-[#8f8583]">
                         Spent ₹{item.spent.toLocaleString()} of ₹{item.total.toLocaleString()}
                       </p>
                     </div>
@@ -67,14 +67,14 @@ function Budgets() {
                         background: `conic-gradient(${color} ${percent * 3.6}deg, #e5e7eb 0deg)`
                       }}
                     >
-                      <div className="w-[45px] h-[45px] rounded-full bg-white flex items-center justify-center text-[12px] font-bold text-slate-600">
+                      <div className="flex h-[45px] w-[45px] items-center justify-center rounded-full bg-white text-[12px] font-bold text-[#5f5755]">
                         {percent}%
                       </div>
                     </div>
                   </div>
 
                   {/* Horizontal Progress Bar */}
-                  <div className="mt-4 w-full h-[10px] bg-slate-200 rounded-[10px] overflow-hidden">
+                  <div className="mt-4 h-[10px] w-full overflow-hidden rounded-[10px] bg-[#ebe3df]">
                     <div
                       style={{
                         width: Math.min(percent, 100) + "%",

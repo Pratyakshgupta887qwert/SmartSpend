@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { useLocation } from "react-router-dom";
@@ -9,6 +9,45 @@ import SpendingPieChart from "../components/SpendingPieChart";
 
 function Dashboard() {
   const location = useLocation();
+
+  const upcomingBills = useMemo(() => {
+    try {
+      const raw = localStorage.getItem("smartspend_upcoming_bills");
+      if (!raw) {
+        return [
+          ["Figma", "Apr 20 · 7:59", "Rs 1,599", "bg-[#f24e1e]"],
+          ["YouTube", "Apr 20 · 7:59", "Rs 1,299", "bg-[#ff0000]"],
+          ["Spotify", "Jun 20 · 6:59", "Rs 299", "bg-[#1db954]"],
+          ["Telegram", "May 20 · 09:00", "Rs 399", "bg-[#229ed9]"],
+        ];
+      }
+
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        return [];
+      }
+
+      return parsed
+        .filter((bill) => !bill.paid)
+        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+        .slice(0, 4)
+        .map((bill) => {
+          const dateLabel = new Date(bill.dueDate).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+          });
+
+          return [
+            bill.title,
+            `${dateLabel} · Due`,
+            `Rs ${Number(bill.amount || 0).toLocaleString()}`,
+            "bg-[#d84843]",
+          ];
+        });
+    } catch {
+      return [];
+    }
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -35,17 +74,17 @@ function Dashboard() {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[#f6f1ee]">
         <Navbar />
 
-        <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-6">
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.55fr)_360px]">
             <div className="space-y-6">
               <section className="overflow-hidden rounded-[30px] bg-white shadow-[0_24px_60px_-30px_rgba(15,23,42,0.28)] ring-1 ring-black/5">
-                <div className="border-b border-[#efe7e3] px-6 pb-5 pt-6">
+                <div className="border-b border-[#efe7e3] px-4 pb-5 pt-6 sm:px-6">
                   <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[#b4aaa6]">
                     Good Morning
                   </p>
                   <div className="mt-2 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                      <h2 className="max-w-sm text-3xl font-black uppercase leading-none tracking-tight text-[#ff4e45]">
+                      <h2 className="max-w-sm text-2xl font-black uppercase leading-none tracking-tight text-[#ff4e45] sm:text-3xl">
                         Your Total Balance
                       </h2>
                       <div className="mt-5 flex items-start gap-4">
@@ -53,7 +92,7 @@ function Dashboard() {
                           <p className="text-xs font-medium text-[#aaa09c]">
                             Total Balance
                           </p>
-                          <p className="mt-1 text-4xl font-bold tracking-tight text-[#1a1516]">
+                          <p className="mt-1 text-3xl font-bold tracking-tight text-[#1a1516] sm:text-4xl">
                             $12,486
                           </p>
                         </div>
@@ -93,9 +132,9 @@ function Dashboard() {
               </section>
 
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
-                <section className="rounded-[28px] bg-white p-5 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.28)] ring-1 ring-black/5">
+                <section className="rounded-[28px] bg-white p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.28)] ring-1 ring-black/5 sm:p-5">
                   <div className="mb-5 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold tracking-tight text-[#1a1516]">
+                    <h2 className="text-xl font-bold tracking-tight text-[#1a1516] sm:text-2xl">
                       Recent Transactions
                     </h2>
                     <button className="rounded-full bg-[#f4eeea] px-3 py-1.5 text-xs font-semibold text-[#655d5b]">
@@ -162,7 +201,7 @@ function Dashboard() {
                   </div>
                 </section>
 
-                <section className="rounded-[28px] bg-white p-5 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.28)] ring-1 ring-black/5">
+                <section className="rounded-[28px] bg-white p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.28)] ring-1 ring-black/5 sm:p-5">
                   <div className="mb-5 flex items-center justify-between">
                     <h2 className="text-xl font-bold tracking-tight text-[#1a1516]">
                       Upcoming Bills
@@ -173,12 +212,7 @@ function Dashboard() {
                   </div>
 
                   <div className="space-y-3">
-                    {[
-                      ["Figma", "Apr 20 · 7:59", "$15.99", "bg-[#f24e1e]"],
-                      ["YouTube", "Apr 20 · 7:59", "$12.99", "bg-[#ff0000]"],
-                      ["Spotify", "Jun 20 · 6:59", "$2.99", "bg-[#1db954]"],
-                      ["Telegram", "May 20 · 09:00", "$3.99", "bg-[#229ed9]"],
-                    ].map(([name, meta, amount, color], i) => (
+                    {upcomingBills.map(([name, meta, amount, color], i) => (
                       <div
                         key={i}
                         className="flex items-center justify-between rounded-[20px] border border-[#efe7e3] bg-[#fcfaf9] px-3 py-3"
@@ -193,6 +227,12 @@ function Dashboard() {
                         <p className="text-sm font-semibold text-[#272122]">{amount}</p>
                       </div>
                     ))}
+
+                    {upcomingBills.length === 0 && (
+                      <div className="rounded-[20px] border border-dashed border-[#e8ddd8] bg-[#fcfaf9] px-3 py-4 text-sm text-[#867b78]">
+                        No upcoming bills yet. Add bills in Pulse section.
+                      </div>
+                    )}
                   </div>
                 </section>
               </div>
@@ -200,7 +240,7 @@ function Dashboard() {
 
             <div className="space-y-6">
               <section className="rounded-[28px] bg-white p-5 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.28)] ring-1 ring-black/5">
-                <h2 className="text-2xl font-bold tracking-tight text-[#1a1516]">
+                <h2 className="text-xl font-bold tracking-tight text-[#1a1516] sm:text-2xl">
                   Spending Breakdown
                 </h2>
 
