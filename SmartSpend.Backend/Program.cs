@@ -19,17 +19,23 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-builder.Services
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+var hasGoogleAuth = !string.IsNullOrWhiteSpace(googleClientId) &&
+                    !string.IsNullOrWhiteSpace(googleClientSecret);
+
+var authenticationBuilder = builder.Services
     .AddAuthentication(options =>
     {
-    options.DefaultScheme = "Cookies"; 
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddCookie("Cookies")
+        options.DefaultScheme = "Cookies";
+        options.DefaultChallengeScheme = hasGoogleAuth
+            ? GoogleDefaults.AuthenticationScheme
+            : JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddCookie("Cookies")
     .AddJwtBearer(options =>
     {
-     
-       var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+        var jwtSettings = builder.Configuration.GetSection("JwtSettings");
         var secretKey = jwtSettings["Secret"];
 
         options.TokenValidationParameters = new TokenValidationParameters
@@ -46,14 +52,18 @@ builder.Services
                 Encoding.UTF8.GetBytes(secretKey)
             )
         };
-    })
-    .AddGoogle(options =>
+    });
+
+if (hasGoogleAuth)
+{
+    authenticationBuilder.AddGoogle(options =>
     {
         options.SignInScheme = "Cookies";
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        options.ClientId = googleClientId!;
+        options.ClientSecret = googleClientSecret!;
         options.CallbackPath = "/signin-google";
     });
+}
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Allowed Frontend", policy =>
@@ -82,4 +92,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-

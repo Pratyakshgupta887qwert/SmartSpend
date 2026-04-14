@@ -226,143 +226,209 @@ function Setting() {
     : "-";
 
   return (
-    <div className="settings-page flex h-screen bg-[#f5f7fb]">
+    <div className="settings-page flex h-screen overflow-hidden bg-[#171214]">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
-        <Navbar />
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[#f6f1ee]">
+        <div className="shrink-0">
+          <Navbar />
+        </div>
 
-        <div className="settings-content min-h-screen overflow-y-auto bg-[#f5f7fb] p-4 pb-24 sm:p-6 sm:pb-6">
-          <div className="max-w-3xl mx-auto">
-            <div className="settings-profile-head mb-6">
-              <img src={resolvedImageUrl} alt="Profile" className="settings-profile-avatar" />
+        <div className="settings-content flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-6">
+          <div className="mx-auto max-w-7xl">
+            <div className="settings-hero mb-6">
               <div>
-                <h3 className="settings-profile-name">{form.name || "User"}</h3>
-                <p className="settings-profile-sub">Manage your profile photo and personal details</p>
-                <label className="settings-upload-btn mt-3 inline-flex cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/jpg,image/webp"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  {uploadingImage ? "Uploading..." : "Upload Profile Image"}
-                </label>
-              </div>
-            </div>
-
-            <div className="settings-meta-grid mb-6">
-              <div className="settings-meta-card">
-                <p className="settings-meta-label">Account Type</p>
-                <p className="settings-meta-value">{form.role}</p>
-              </div>
-              <div className="settings-meta-card">
-                <p className="settings-meta-label">Member Since</p>
-                <p className="settings-meta-value">{memberSince}</p>
-              </div>
-              <div className="settings-meta-card">
-                <p className="settings-meta-label">Profile Status</p>
-                <p className="settings-meta-value">Active</p>
-              </div>
-            </div>
-
-            <div className="settings-card bg-white p-6 sm:p-8">
-              <div className="mb-6 settings-card-head">
-                <h2 className="text-2xl font-bold text-[#1a1516]">Account Settings</h2>
-                <p className="mt-1 text-sm text-[#8f8583]">
-                  Update your personal details used across SmartSpend.
+                <p className="settings-kicker">Control Room</p>
+                <h1 className="mt-2 text-3xl font-black tracking-tight text-[#1a1516] md:text-5xl">
+                  Account Settings
+                </h1>
+                <p className="mt-3 max-w-2xl text-sm font-medium text-[#7f7471]">
+                  Keep your profile, role, and SmartSpend identity tuned for every budget decision.
                 </p>
               </div>
 
-              {loading ? (
-                <div className="py-10 text-sm text-[#8f8583]">Loading your profile...</div>
-              ) : (
-                <form onSubmit={handleSave} className="space-y-5">
-                  {error && (
-                    <div className="settings-alert error rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                      {error}
+              <div className="settings-hero-badge">
+                <span>Profile</span>
+                <strong>{hasChanges ? "Unsaved edits" : "All synced"}</strong>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+              <aside className="space-y-6">
+                <section className="settings-profile-panel">
+                  <div className="settings-profile-cover">
+                    <div className="settings-profile-orbit">
+                      <img src={resolvedImageUrl} alt="Profile" className="settings-profile-avatar" />
                     </div>
+                  </div>
+
+                  <div className="settings-profile-body">
+                    <p className="settings-kicker text-[#d84843]">Signed in as</p>
+                    <h2 className="settings-profile-name">{form.name || "User"}</h2>
+                    <p className="settings-profile-sub">
+                      {form.email || "Your SmartSpend profile"}
+                    </p>
+
+                    <label className="settings-upload-btn mt-5 inline-flex cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                      {uploadingImage ? "Uploading..." : "Upload Profile Image"}
+                    </label>
+                  </div>
+                </section>
+
+                <section className="settings-mini-panel">
+                  <p className="settings-kicker">Profile Score</p>
+                  <div className="settings-score-ring">
+                    <div>
+                      <strong>{form.name && form.email ? "100%" : "60%"}</strong>
+                      <span>Ready</span>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm font-medium text-[#7f7471]">
+                    Your profile powers personalized dashboard labels and budget context.
+                  </p>
+                </section>
+              </aside>
+
+              <main className="space-y-6">
+                <div className="settings-meta-grid">
+                  <div className="settings-meta-card accent">
+                    <p className="settings-meta-label">Account Type</p>
+                    <p className="settings-meta-value">{form.role}</p>
+                    <span>SmartSpend access</span>
+                  </div>
+                  <div className="settings-meta-card">
+                    <p className="settings-meta-label">Member Since</p>
+                    <p className="settings-meta-value">{memberSince}</p>
+                    <span>First login date</span>
+                  </div>
+                  <div className="settings-meta-card">
+                    <p className="settings-meta-label">Profile Status</p>
+                    <p className="settings-meta-value">Active</p>
+                    <span>Ready to budget</span>
+                  </div>
+                </div>
+
+                <section className="settings-card bg-white p-6 sm:p-8">
+                  <div className="mb-6 settings-card-head">
+                    <div>
+                      <p className="settings-kicker">Personal Details</p>
+                      <h2 className="mt-2 text-3xl font-bold tracking-tight text-[#1a1516]">
+                        Profile Console
+                      </h2>
+                    </div>
+                    <span className={`settings-state-pill ${hasChanges ? "pending" : ""}`}>
+                      {hasChanges ? "Needs save" : "Synced"}
+                    </span>
+                  </div>
+
+                  {loading ? (
+                    <div className="settings-loading">
+                      <div className="settings-loading-mark" />
+                      <p>Loading your profile...</p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSave} className="space-y-5">
+                      {error && (
+                        <div className="settings-alert error rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                          {error}
+                        </div>
+                      )}
+
+                      {success && (
+                        <div className="settings-alert success rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                          {success}
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="settings-field">
+                          <label className="settings-label mb-2 block text-sm font-medium" htmlFor="name">
+                            Full Name
+                          </label>
+                          <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            value={form.name}
+                            onChange={handleInputChange}
+                            className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none"
+                            placeholder="Enter your name"
+                            required
+                          />
+                        </div>
+
+                        <div className="settings-field">
+                          <label className="settings-label mb-2 block text-sm font-medium" htmlFor="email">
+                            Email Address
+                          </label>
+                          <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={form.email}
+                            onChange={handleInputChange}
+                            className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none"
+                            placeholder="Enter your email"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="settings-field">
+                          <label className="settings-label mb-2 block text-sm font-medium">Role</label>
+                          <select
+                            name="role"
+                            value={form.role}
+                            onChange={handleInputChange}
+                            className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm"
+                          >
+                            {roleOptions.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="settings-field">
+                          <label className="settings-label mb-2 block text-sm font-medium">Member Since</label>
+                          <input
+                            type="text"
+                            value={memberSince}
+                            readOnly
+                            className="settings-input muted w-full rounded-lg border px-3 py-2.5 text-sm"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="settings-save-row">
+                        <div>
+                          <p className="text-sm font-bold text-[#1a1516]">
+                            {hasChanges ? "Review your edits before saving." : "No profile edits waiting."}
+                          </p>
+                          <p className="mt-1 text-xs font-medium text-[#9d9390]">
+                            Changes update your SmartSpend session instantly.
+                          </p>
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={!hasChanges || saving}
+                          className="settings-save-btn rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {saving ? "Saving..." : "Save Changes"}
+                        </button>
+                      </div>
+                    </form>
                   )}
-
-                  {success && (
-                    <div className="settings-alert success rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-                      {success}
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className="settings-label mb-2 block text-sm font-medium" htmlFor="name">
-                        Full Name
-                      </label>
-                      <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        value={form.name}
-                        onChange={handleInputChange}
-                        className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none"
-                        placeholder="Enter your name"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="settings-label mb-2 block text-sm font-medium" htmlFor="email">
-                        Email Address
-                      </label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={form.email}
-                        onChange={handleInputChange}
-                        className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none"
-                        placeholder="Enter your email"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className="settings-label mb-2 block text-sm font-medium">Role</label>
-                      <select
-                        name="role"
-                        value={form.role}
-                        onChange={handleInputChange}
-                        className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm"
-                      >
-                        {roleOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="settings-label mb-2 block text-sm font-medium">Member Since</label>
-                      <input
-                        type="text"
-                        value={memberSince}
-                        readOnly
-                        className="settings-input muted w-full rounded-lg border px-3 py-2.5 text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex justify-end">
-                    <button
-                      type="submit"
-                      disabled={!hasChanges || saving}
-                      className="settings-save-btn rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {saving ? "Saving..." : "Save Changes"}
-                    </button>
-                  </div>
-                </form>
-              )}
+                </section>
+              </main>
             </div>
           </div>
         </div>
