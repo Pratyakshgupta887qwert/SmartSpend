@@ -18,6 +18,8 @@ namespace SmartSpend.Backend.Data
 
         public DbSet<Expense> Expenses { get; set; }
 
+        public DbSet<UpcomingBill> UpcomingBills { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -65,6 +67,22 @@ namespace SmartSpend.Backend.Data
             modelBuilder.Entity<Expense>()
                 .Property(expense => expense.Amount)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<UpcomingBill>()
+                .Property(bill => bill.Amount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<UpcomingBill>()
+                .HasOne(bill => bill.User)
+                .WithMany()
+                .HasForeignKey(bill => bill.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UpcomingBill>()
+                .HasOne(bill => bill.Category)
+                .WithMany()
+                .HasForeignKey(bill => bill.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

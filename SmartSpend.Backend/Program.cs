@@ -1,50 +1,24 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using SmartSpend.Backend.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SmartSpend.Backend.Services;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
-var builder = WebApplication.CreateBuilder(args);
+
+var builder = WebApplication.CreateBuilder(args);   
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "SmartSpend API",
-        Version = "v1"
-    });
-
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter your JWT token like: Bearer {your token}"
-    });
-
-    options.AddSecurityRequirement(openApiDocument => new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecuritySchemeReference("Bearer", openApiDocument),
-            new List<string>()
-        }
-    });
-});
+builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<JwtService>();
-builder.Services.AddHttpClient<IGeminiReceiptOcrService, GeminiReceiptOcrService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
 var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 var hasGoogleAuth = !string.IsNullOrWhiteSpace(googleClientId) &&
@@ -62,7 +36,7 @@ var authenticationBuilder = builder.Services
     .AddJwtBearer(options =>
     {
         var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-        var secretKey = JwtConfiguration.GetSecret(builder.Configuration, builder.Environment);
+        var secretKey = jwtSettings["Secret"];
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -90,15 +64,14 @@ if (hasGoogleAuth)
         options.CallbackPath = "/signin-google";
     });
 }
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Allowed Frontend", policy =>
     {
         policy.WithOrigins("http://localhost:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 

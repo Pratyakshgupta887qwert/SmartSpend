@@ -1,6 +1,6 @@
 namespace SmartSpend.Backend.Models;
 
-public class Category
+public class UpcomingBill
 {
     public int Id { get; set; }
 
@@ -8,11 +8,15 @@ public class Category
 
     public string Name { get; set; } = string.Empty;
 
-    public string? Type { get; set; }
+    public decimal Amount { get; set; }
+
+    public DateTime DueDate { get; set; }
+
+    public int CategoryId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public User User { get; set; } = null!;
 
-    public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+    public Category Category { get; set; } = null!;
 }

@@ -3,23 +3,45 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import ExpenseChart from "../components/ExpenseChart";
+import { Trash2 } from "lucide-react";
+import { useNotifications } from "../context/NotificationContext";
 
 import SpendingPieChart from "../components/SpendingPieChart";
 
 function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { addNotification } = useNotifications();
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [incomeInput, setIncomeInput] = useState(0);
+  const [summary, setSummary] = useState(null);
+  const [summaryError, setSummaryError] = useState("");
+  const [dashboardData, setDashboardData] = useState(null);
+  const [pieData, setPieData] = useState([]);
+  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [graphData, setGraphData] = useState([]);
+  const [upcomingBills, setUpcomingBills] = useState([]);
+
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:5030";
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("smartspend_upcoming_bills");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          const sorted = parsed
+            .filter((b) => !b.paid)
+            .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+            .slice(0, 4);
+          setUpcomingBills(sorted);
+        }
+      }
+    } catch {
+      // Ignore parse errors safely
+    }
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -39,19 +61,172 @@ function Dashboard() {
     }
   }, [location]);
 
-  const chartData = [
-    { day: "Jan", expense: 0, income: monthlyIncome },
-    { day: "Feb", expense: 0, income: monthlyIncome },
-    { day: "Mar", expense: 0, income: monthlyIncome },
-    { day: "Apr", expense: 0, income: monthlyIncome },
-    { day: "May", expense: 0, income: monthlyIncome },
-    { day: "Jun", expense: 0, income: monthlyIncome },
-    { day: "Jul", expense: 0, income: monthlyIncome },
-  ];
+  const fetchDashboardData = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+
+    try {
+      setSummaryError("");
+
+      // 1. GET /api/Dashboard/overview
+      const overviewRes = await fetch(`${API_BASE}/api/Dashboard/overview`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!overviewRes.ok) throw new Error("Unable to load dashboard overview");
+      const overviewData = await overviewRes.json();
+      console.log("[Dashboard] overview:", overviewData);
+      setDashboardData(overviewData);
+      setMonthlyIncome(Number(overviewData.income || 0));
+
+      // 2. GET /api/Dashboard/category-breakdown
+      const breakdownRes = await fetch(
+        `${API_BASE}/api/Dashboard/category-breakdown?month=${month}&year=${year}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!breakdownRes.ok) throw new Error("Unable to load category breakdown");
+      const breakdownData = await breakdownRes.json();
+      console.log("[Dashboard] category-breakdown:", breakdownData);
+      const mappedPie = breakdownData.map((item) => ({
+        name: item.category,
+        value: Number(item.totalExpense || 0),
+      }));
+      setPieData(mappedPie);
+      // Sync summary state for the existing chart / stat cards
+      setSummary({
+        amountSet: overviewData.income,
+        totalSpent: overviewData.totalExpense,
+        savings: overviewData.totalBalance,
+        savingsRate: overviewData.savingsRate,
+        categoryBreakdown: breakdownData.map((item) => ({
+          category: item.category,
+          amount: item.totalExpense,
+        })),
+      });
+
+      // 3. GET /api/Expenses/recent
+      const recentRes = await fetch(`${API_BASE}/api/Expenses/recent?limit=10`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!recentRes.ok) throw new Error("Unable to load recent expenses");
+      const recentData = await recentRes.json();
+      console.log("[Dashboard] recent expenses:", recentData);
+      setRecentTransactions(recentData);
+
+      // 4. GET /api/Dashboard/monthly-graph
+      const graphRes = await fetch(`${API_BASE}/api/Dashboard/monthly-graph`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (graphRes.ok) {
+        const graphJson = await graphRes.json();
+        setGraphData(graphJson);
+      }
+    } catch (error) {
+      setSummaryError(error.message || "Unable to load dashboard data");
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [API_BASE]);
+
+  const chartData = (() => {
+    const currentMonthIndex = new Date().getMonth();
+    const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const displayLabels = labels.slice(0, Math.max(7, currentMonthIndex + 1));
+    const amountSet = Number(monthlyIncome || 0);
+
+    return displayLabels.map((label, index) => {
+      const monthNumber = index + 1;
+      const monthData = graphData.find(g => g.month === monthNumber);
+
+      return {
+        day: label,
+        expense: monthData ? Number(monthData.totalExpense) : 0,
+        income: amountSet,
+      };
+    });
+  })();
 
   const handleSetBudget = () => {
-    setMonthlyIncome(Number(incomeInput) || 0);
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const amount = Number(incomeInput) || 0;
+    if (amount <= 0) return;
+
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+
+    const saveBudget = async () => {
+      try {
+        await fetch(`${API_BASE}/api/Budgets`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            amountSet: amount,
+            month,
+            year,
+          }),
+        });
+
+        setMonthlyIncome(amount);
+        await fetchDashboardData();
+      } catch (error) {
+        setSummaryError("Unable to save budget");
+      }
+    };
+
+    saveBudget();
   };
+
+  const handleRemoveExpense = async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/expenses/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (!res.ok) throw new Error("Failed to delete expense");
+
+      addNotification({
+        title: "Expense Removed",
+        message: "The transaction has been successfully deleted.",
+        type: "success",
+      });
+
+      // Refetch everything right away to update the UI globally
+      fetchDashboardData();
+    } catch (error) {
+      console.error(error);
+      addNotification({
+        title: "Error",
+        message: "Could not remove expense.",
+        type: "error",
+      });
+    }
+  };
+
+  const pieChartData = pieData.length > 0
+    ? pieData
+    : summary?.categoryBreakdown?.map((item) => ({
+        name: item.category,
+        value: Number(item.amount || 0),
+      })) || [];
+
+  const totalSpent = Number(summary?.totalSpent || 0);
+  const savings = Number(summary?.savings || 0);
+  const savingsRate = Number(summary?.savingsRate || 0);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#171214]">
@@ -74,6 +249,11 @@ function Dashboard() {
                   <p className="mt-2 text-xs text-[#b0a5a1]">
                     Note: Your budget will be updated on the 1st of every month.
                   </p>
+                  {summaryError && (
+                    <p className="mt-2 text-xs font-semibold text-[#d84843]">
+                      {summaryError}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -120,7 +300,7 @@ function Dashboard() {
                             </p>
                           </div>
                           <span className="mt-3 rounded-full bg-[#d84843] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-                            0.0%
+                            {savingsRate.toFixed(1)}%
                           </span>
                         </div>
                       </div>
@@ -133,89 +313,7 @@ function Dashboard() {
 
                   <div className="px-3 pt-4 md:px-5">
                     <div className="rounded-[24px] bg-[linear-gradient(180deg,#fbf7f5_0%,#ffffff_100%)] p-3">
-                      <ResponsiveContainer width="100%" height={220}>
-                        <AreaChart
-                          data={chartData}
-                          margin={{ top: 10, right: 16, left: -18, bottom: 0 }}
-                        >
-                          <defs>
-                            <linearGradient id="expenseFillDashboard" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="#d84843" stopOpacity={0.18} />
-                              <stop offset="100%" stopColor="#ffffff" stopOpacity={0.02} />
-                            </linearGradient>
-                            <linearGradient id="incomeFillDashboard" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="#1f9d59" stopOpacity={0.18} />
-                              <stop offset="100%" stopColor="#ffffff" stopOpacity={0.02} />
-                            </linearGradient>
-                          </defs>
-
-                          <CartesianGrid
-                            stroke="#efe6e2"
-                            vertical={false}
-                            strokeDasharray="4 4"
-                          />
-
-                          <XAxis
-                            dataKey="day"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: "#9c9190", fontSize: 11 }}
-                          />
-
-                          <YAxis
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: "#c1b6b1", fontSize: 10 }}
-                            width={34}
-                          />
-
-                          <Tooltip
-                            formatter={(value, name) => [
-                              `Rs ${value}`,
-                              name === "income" ? "Income" : "Expense",
-                            ]}
-                            contentStyle={{
-                              backgroundColor: "#231c1f",
-                              border: "none",
-                              borderRadius: "16px",
-                              color: "#fff",
-                              boxShadow: "0 16px 40px rgba(0,0,0,0.18)",
-                            }}
-                            labelStyle={{ color: "#f4e9e6", fontWeight: 600 }}
-                            itemStyle={{ color: "#ff8d88" }}
-                          />
-
-                          <Area
-                            type="monotone"
-                            dataKey="expense"
-                            stroke="#d84843"
-                            fill="url(#expenseFillDashboard)"
-                            strokeWidth={3}
-                            dot={{ r: 0 }}
-                            activeDot={{
-                              r: 4,
-                              fill: "#d84843",
-                              stroke: "#fff7f5",
-                              strokeWidth: 2,
-                            }}
-                          />
-
-                          <Area
-                            type="monotone"
-                            dataKey="income"
-                            stroke="#1f9d59"
-                            fill="url(#incomeFillDashboard)"
-                            strokeWidth={3}
-                            dot={{ r: 0 }}
-                            activeDot={{
-                              r: 4,
-                              fill: "#1f9d59",
-                              stroke: "#f3fff8",
-                              strokeWidth: 2,
-                            }}
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
+                      <ExpenseChart data={chartData} />
                     </div>
                   </div>
 
@@ -226,8 +324,16 @@ function Dashboard() {
                         label: "Income",
                         tone: "text-[#494141]",
                       },
-                      { value: "Rs 0", label: "Expense", tone: "text-[#d84843]" },
-                      { value: "Rs 0", label: "Savings", tone: "text-[#494141]" },
+                      {
+                        value: `Rs ${totalSpent.toLocaleString()}`,
+                        label: "Expense",
+                        tone: "text-[#d84843]",
+                      },
+                      {
+                        value: `Rs ${savings.toLocaleString()}`,
+                        label: "Savings",
+                        tone: "text-[#494141]",
+                      },
                     ].map((item, i) => (
                       <div
                         key={i}
@@ -251,26 +357,59 @@ function Dashboard() {
                       </p>
                     </div>
                     <button
-                      onClick={() => navigate("/addexpense")}
+                      onClick={() => navigate("/uploadreceipt")}
                       className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4eeea] text-2xl font-medium text-[#655d5b] transition hover:bg-[#ece4df]"
                     >
                       +
                     </button>
                   </div>
 
-                  <div className="flex min-h-[420px] items-center justify-center rounded-[28px] border border-dashed border-[#e7deda] bg-[#fcfaf9] px-6 text-center">
-                    <div>
-                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f3ece8] text-2xl text-[#b0a5a1]">
-                        +
-                      </div>
-                      <h3 className="mt-5 text-xl font-semibold text-[#1a1516]">
-                        No transactions yet
-                      </h3>
-                      <p className="mt-2 max-w-md text-sm leading-6 text-[#938987]">
-                        Recent transactions will populate here after expenses start syncing from your backend.
-                      </p>
+                  {recentTransactions.length > 0 ? (
+                    <div className="space-y-3">
+                      {recentTransactions.map((txn) => (
+                        <div
+                          key={txn.id}
+                          className="flex items-center justify-between rounded-[22px] border border-[#efe7e3] bg-[#faf7f5] px-4 py-3"
+                        >
+                          <div>
+                            <p className="text-sm font-semibold text-[#1a1516]">
+                              {txn.description || txn.category}
+                            </p>
+                            <p className="mt-0.5 text-xs text-[#9e9491]">
+                              {txn.category} &middot;{" "}
+                              {new Date(txn.spentAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm font-bold text-[#d84843]">
+                              - Rs {Number(txn.amount).toLocaleString()}
+                            </span>
+                            <button
+                              onClick={() => handleRemoveExpense(txn.id)}
+                              className="text-[#b0a5a1] hover:text-[#d84843] transition-colors"
+                              title="Delete Transaction"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex min-h-[420px] items-center justify-center rounded-[28px] border border-dashed border-[#e7deda] bg-[#fcfaf9] px-6 text-center">
+                      <div>
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f3ece8] text-2xl text-[#b0a5a1]">
+                          +
+                        </div>
+                        <h3 className="mt-5 text-xl font-semibold text-[#1a1516]">
+                          No transactions yet
+                        </h3>
+                        <p className="mt-2 max-w-md text-sm leading-6 text-[#938987]">
+                          Recent transactions will populate here after expenses start syncing from your backend.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </section>
               </div>
 
@@ -281,24 +420,29 @@ function Dashboard() {
                   </h2>
 
                   <div className="mt-4 rounded-[24px] bg-[#fbf7f5] p-3">
-                    <SpendingPieChart />
+                    <SpendingPieChart data={pieChartData} />
                   </div>
 
                   <div className="mt-4 space-y-3 text-sm">
-                    {[
-                      ["Food", "Rs 0", "bg-[#d84843]"],
-                      ["Travel", "Rs 0", "bg-[#2a2628]"],
-                      ["Meds", "Rs 0", "bg-[#ddd4d1]"],
-                      ["School", "Rs 0", "bg-[#f1b9b6]"],
-                    ].map(([name, amount, color], i) => (
-                      <div key={i} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <span className={`h-2.5 w-2.5 rounded-full ${color}`} />
-                          <span className="font-medium text-[#423b3b]">{name}</span>
+                    {(summary?.categoryBreakdown || []).length > 0 ? (
+                      summary.categoryBreakdown.map((item, i) => (
+                        <div key={i} className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="h-2.5 w-2.5 rounded-full bg-[#d84843]" />
+                            <span className="font-medium text-[#423b3b]">
+                              {item.category}
+                            </span>
+                          </div>
+                          <span className="font-semibold text-[#1a1516]">
+                            Rs {Number(item.amount || 0).toLocaleString()}
+                          </span>
                         </div>
-                        <span className="font-semibold text-[#1a1516]">{amount}</span>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-xs text-[#9e9491]">
+                        No spending data available yet.
+                      </p>
+                    )}
                   </div>
                 </section>
 
@@ -371,19 +515,37 @@ function Dashboard() {
                     </button>
                   </div>
 
-                  <div className="flex min-h-[220px] items-center justify-center rounded-[24px] border border-dashed border-[#e7deda] bg-[#fcfaf9] px-6 text-center">
-                    <div>
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f3ece8] text-xl text-[#b0a5a1]">
-                        +
-                      </div>
-                      <p className="mt-4 text-lg font-semibold text-[#1a1516]">
-                        No upcoming bills yet
-                      </p>
-                      <p className="mt-2 text-sm leading-6 text-[#938987]">
-                        Upcoming bills will populate here after backend integration is added.
-                      </p>
+                  {upcomingBills.length > 0 ? (
+                    <div className="space-y-3">
+                      {upcomingBills.map((bill) => (
+                        <div key={bill.id} className="flex items-center justify-between rounded-[20px] border border-[#efe7e3] bg-[#faf7f5] px-4 py-3">
+                          <div>
+                            <p className="text-sm font-semibold text-[#1a1516]">{bill.title}</p>
+                            <p className="mt-0.5 text-xs text-[#9e9491]">
+                              Due {new Date(bill.dueDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <span className="text-sm font-bold text-[#1a1516]">
+                            Rs {Number(bill.amount).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex min-h-[220px] items-center justify-center rounded-[24px] border border-dashed border-[#e7deda] bg-[#fcfaf9] px-6 text-center">
+                      <div>
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f3ece8] text-xl text-[#b0a5a1]">
+                          +
+                        </div>
+                        <p className="mt-4 text-lg font-semibold text-[#1a1516]">
+                          No upcoming bills yet
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-[#938987]">
+                          Go to the Pulse page to manually add your first upcoming bill.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </section>
               </div>
             </div>
