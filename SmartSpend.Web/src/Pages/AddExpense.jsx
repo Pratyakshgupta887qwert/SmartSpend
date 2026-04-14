@@ -1,11 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useNotifications } from "../context/NotificationContext";
 
 function AddExpense() {
   const { addNotification } = useNotifications();
+  const navigate = useNavigate();
   const apiBaseUrl = "https://localhost:5030";
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -84,11 +86,31 @@ function AddExpense() {
         type: "success",
       });
     } catch (scanError) {
+      const status = scanError.response?.status;
+      const serverMessage =
+        typeof scanError.response?.data === "string"
+          ? scanError.response.data
+          : scanError.response?.data?.message;
+
+      const message =
+        status === 401
+          ? "Your login session expired. Please log out, log in again, then scan the receipt."
+          : status === 403
+            ? "You do not have permission to scan receipts with this account."
+            : serverMessage || scanError.message || "Unable to read this receipt right now.";
+
       addNotification({
-        title: "Gemini scan failed",
-        message: scanError.response?.data || "Unable to read this receipt right now.",
+        title: status === 401 ? "Login required" : "Gemini scan failed",
+        message,
         type: "error",
       });
+
+      if (status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userRole");
+        navigate("/login");
+      }
     } finally {
       setIsScanning(false);
     }

@@ -1,103 +1,13 @@
-<<<<<<< HEAD
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.EntityFrameworkCore;
-using SmartSpend.Backend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using SmartSpend.Backend.Data;
 using SmartSpend.Backend.Services;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
 
-
-var builder = WebApplication.CreateBuilder(args);   
-
-// Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
-builder.Services.AddScoped<JwtService>();
-builder.Services.AddHttpClient<IGeminiReceiptOcrService, GeminiReceiptOcrService>();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
-builder.Services
-    .AddAuthentication(options =>
-    {
-    options.DefaultScheme = "Cookies"; 
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddCookie("Cookies")
-    .AddJwtBearer(options =>
-    {
-     
-       var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-        var secretKey = jwtSettings["Secret"];
-
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(secretKey)
-            )
-        };
-    })
-    .AddGoogle(options =>
-    {
-        options.SignInScheme = "Cookies";
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-        options.CallbackPath = "/signin-google";
-    });
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Allowed Frontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:5173")
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-    });
-});
-
-var app = builder.Build();
-app.UseCors("Allowed Frontend");
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
-
-=======
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.EntityFrameworkCore;
-using SmartSpend.Backend.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using SmartSpend.Backend.Services;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-
-
-var builder = WebApplication.CreateBuilder(args);   
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
@@ -119,27 +29,22 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Enter your JWT token like: Bearer {your token}"
     });
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(openApiDocument => new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
+            new OpenApiSecuritySchemeReference("Bearer", openApiDocument),
+            new List<string>()
         }
     });
 });
 builder.Services.AddControllers();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddHttpClient<IGeminiReceiptOcrService, GeminiReceiptOcrService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
 var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 var hasGoogleAuth = !string.IsNullOrWhiteSpace(googleClientId) &&
@@ -157,12 +62,7 @@ var authenticationBuilder = builder.Services
     .AddJwtBearer(options =>
     {
         var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-        var secretKey = jwtSettings["Secret"];
-
-        if (string.IsNullOrWhiteSpace(secretKey) || secretKey == "SET_THIS_VIA_DOTNET_USER_SECRETS")
-        {
-            throw new InvalidOperationException("JWT Secret is missing. Set JwtSettings:Secret before running the API.");
-        }
+        var secretKey = JwtConfiguration.GetSecret(builder.Configuration, builder.Environment);
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -190,14 +90,15 @@ if (hasGoogleAuth)
         options.CallbackPath = "/signin-google";
     });
 }
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Allowed Frontend", policy =>
     {
         policy.WithOrigins("http://localhost:5173")
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -218,5 +119,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
->>>>>>> 302e5da72d321dd0a078344f385e6cf493a1a697

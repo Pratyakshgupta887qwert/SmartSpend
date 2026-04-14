@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using SmartSpend.Backend.DTOs;
@@ -102,17 +103,11 @@ public class GeminiReceiptOcrService : IGeminiReceiptOcrService
             }
         };
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent")
-        {
-            Content = JsonContent.Create(payload)
-        };
-        request.Headers.Add("x-goog-api-key", apiKey);
-
-        using var response = await _httpClient.SendAsync(request, cancellationToken);
+        using var response = await SendGeminiRequestAsync(model, apiKey, payload, cancellationToken);
         var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
 
         if (!response.IsSuccessStatusCode)
-            throw new InvalidOperationException($"Gemini OCR failed: {responseText}");
+            throw new InvalidOperationException(GetGeminiErrorMessage(response.StatusCode, responseText));
 
         var geminiResponse = JsonSerializer.Deserialize<GeminiGenerateContentResponse>(responseText, JsonOptions);
         var json = geminiResponse?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text;
@@ -125,6 +120,55 @@ public class GeminiReceiptOcrService : IGeminiReceiptOcrService
             throw new InvalidOperationException("Unable to parse Gemini receipt data.");
 
         return result;
+    }
+
+    private async Task<HttpResponseMessage> SendGeminiRequestAsync(
+        string model,
+        string apiKey,
+        object payload,
+        CancellationToken cancellationToken)
+    {
+        var transientDelays = new[]
+        {
+            TimeSpan.FromSeconds(1),
+            TimeSpan.FromSeconds(2),
+            TimeSpan.FromSeconds(4)
+        };
+
+        for (var attempt = 0; ; attempt++)
+        {
+            using var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent")
+            {
+                Content = JsonContent.Create(payload)
+            };
+            request.Headers.Add("x-goog-api-key", apiKey);
+
+            var response = await _httpClient.SendAsync(request, cancellationToken);
+
+            if (!IsTransientGeminiFailure(response.StatusCode) || attempt >= transientDelays.Length)
+                return response;
+
+            response.Dispose();
+            await Task.Delay(transientDelays[attempt], cancellationToken);
+        }
+    }
+
+    private static bool IsTransientGeminiFailure(HttpStatusCode statusCode)
+    {
+        return statusCode == HttpStatusCode.TooManyRequests ||
+               statusCode == HttpStatusCode.BadGateway ||
+               statusCode == HttpStatusCode.ServiceUnavailable ||
+               statusCode == HttpStatusCode.GatewayTimeout;
+    }
+
+    private static string GetGeminiErrorMessage(HttpStatusCode statusCode, string responseText)
+    {
+        if (IsTransientGeminiFailure(statusCode))
+            return "Gemini is busy right now. Please wait a moment and scan the receipt again.";
+
+        return $"Gemini OCR failed: {responseText}";
     }
 
     private static async Task<string> ToBase64Async(IFormFile receipt, CancellationToken cancellationToken)
