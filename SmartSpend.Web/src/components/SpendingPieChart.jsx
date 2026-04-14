@@ -6,7 +6,7 @@ import {
   Tooltip,
 } from "recharts";
 
-const pieData = [
+const FALLBACK_DATA = [
   { name: "Food", value: 0.0001 },
   { name: "Travel", value: 0.0001 },
   { name: "Meds", value: 0.0001 },
@@ -15,12 +15,13 @@ const pieData = [
 
 const COLORS = ["#d84843", "#2a2628", "#ddd4d1", "#f1b9b6"];
 
-function SpendingPieChart() {
+function SpendingPieChart({ data }) {
+  const chartData = data && data.length > 0 ? data : FALLBACK_DATA;
   return (
     <ResponsiveContainer width="100%" height={220}>
       <PieChart>
         <Pie
-          data={pieData}
+          data={chartData}
           dataKey="value"
           cx="50%"
           cy="50%"
@@ -29,12 +30,12 @@ function SpendingPieChart() {
           paddingAngle={3}
           stroke="none"
         >
-          {pieData.map((_, i) => (
-            <Cell key={i} fill={COLORS[i]} />
+          {chartData.map((_, i) => (
+            <Cell key={i} fill={COLORS[i % COLORS.length]} />
           ))}
         </Pie>
         <Tooltip
-          formatter={() => ["Rs 0", "Amount"]}
+          formatter={(value) => [`Rs ${value}`, "Amount"]}
           contentStyle={{
             backgroundColor: "#231c1f",
             border: "none",

@@ -20,6 +20,10 @@ function Dashboard() {
   const navigate = useNavigate();
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [incomeInput, setIncomeInput] = useState(0);
+  const [summary, setSummary] = useState(null);
+  const [summaryError, setSummaryError] = useState("");
+
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:5030";
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -39,19 +43,97 @@ function Dashboard() {
     }
   }, [location]);
 
-  const chartData = [
-    { day: "Jan", expense: 0, income: monthlyIncome },
-    { day: "Feb", expense: 0, income: monthlyIncome },
-    { day: "Mar", expense: 0, income: monthlyIncome },
-    { day: "Apr", expense: 0, income: monthlyIncome },
-    { day: "May", expense: 0, income: monthlyIncome },
-    { day: "Jun", expense: 0, income: monthlyIncome },
-    { day: "Jul", expense: 0, income: monthlyIncome },
-  ];
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+
+    const fetchSummary = async () => {
+      try {
+        setSummaryError("");
+        const response = await fetch(
+          `${API_BASE}/api/Dashboard/summary?month=${month}&year=${year}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Unable to load dashboard summary");
+        }
+
+        const data = await response.json();
+        setSummary(data);
+        setMonthlyIncome(Number(data.amountSet || 0));
+      } catch (error) {
+        setSummaryError(error.message || "Unable to load dashboard summary");
+      }
+    };
+
+    fetchSummary();
+  }, [API_BASE]);
+
+  const chartData = (() => {
+    const now = new Date();
+    const currentMonth = now.getMonth() % 7;
+    const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+
+    return labels.map((label, index) => ({
+      day: label,
+      expense: index === currentMonth ? Number(summary?.totalSpent || 0) : 0,
+      income: index === currentMonth ? Number(summary?.amountSet || 0) : 0,
+    }));
+  })();
 
   const handleSetBudget = () => {
-    setMonthlyIncome(Number(incomeInput) || 0);
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const amount = Number(incomeInput) || 0;
+    if (amount <= 0) return;
+
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+
+    const saveBudget = async () => {
+      try {
+        await fetch(`${API_BASE}/api/Budgets`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            amountSet: amount,
+            month,
+            year,
+          }),
+        });
+
+        setMonthlyIncome(amount);
+      } catch (error) {
+        setSummaryError("Unable to save budget");
+      }
+    };
+
+    saveBudget();
   };
+
+  const pieChartData =
+    summary?.categoryBreakdown?.map((item) => ({
+      name: item.category,
+      value: Number(item.amount || 0),
+    })) || [];
+
+  const totalSpent = Number(summary?.totalSpent || 0);
+  const savings = Number(summary?.savings || 0);
+  const savingsRate = Number(summary?.savingsRate || 0);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#171214]">
@@ -74,6 +156,11 @@ function Dashboard() {
                   <p className="mt-2 text-xs text-[#b0a5a1]">
                     Note: Your budget will be updated on the 1st of every month.
                   </p>
+                  {summaryError && (
+                    <p className="mt-2 text-xs font-semibold text-[#d84843]">
+                      {summaryError}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -120,7 +207,7 @@ function Dashboard() {
                             </p>
                           </div>
                           <span className="mt-3 rounded-full bg-[#d84843] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-                            0.0%
+                            {savingsRate.toFixed(1)}%
                           </span>
                         </div>
                       </div>
@@ -226,8 +313,16 @@ function Dashboard() {
                         label: "Income",
                         tone: "text-[#494141]",
                       },
-                      { value: "Rs 0", label: "Expense", tone: "text-[#d84843]" },
-                      { value: "Rs 0", label: "Savings", tone: "text-[#494141]" },
+                      {
+                        value: `Rs ${totalSpent.toLocaleString()}`,
+                        label: "Expense",
+                        tone: "text-[#d84843]",
+                      },
+                      {
+                        value: `Rs ${savings.toLocaleString()}`,
+                        label: "Savings",
+                        tone: "text-[#494141]",
+                      },
                     ].map((item, i) => (
                       <div
                         key={i}
@@ -281,24 +376,29 @@ function Dashboard() {
                   </h2>
 
                   <div className="mt-4 rounded-[24px] bg-[#fbf7f5] p-3">
-                    <SpendingPieChart />
+                    <SpendingPieChart data={pieChartData} />
                   </div>
 
                   <div className="mt-4 space-y-3 text-sm">
-                    {[
-                      ["Food", "Rs 0", "bg-[#d84843]"],
-                      ["Travel", "Rs 0", "bg-[#2a2628]"],
-                      ["Meds", "Rs 0", "bg-[#ddd4d1]"],
-                      ["School", "Rs 0", "bg-[#f1b9b6]"],
-                    ].map(([name, amount, color], i) => (
-                      <div key={i} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <span className={`h-2.5 w-2.5 rounded-full ${color}`} />
-                          <span className="font-medium text-[#423b3b]">{name}</span>
+                    {(summary?.categoryBreakdown || []).length > 0 ? (
+                      summary.categoryBreakdown.map((item, i) => (
+                        <div key={i} className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="h-2.5 w-2.5 rounded-full bg-[#d84843]" />
+                            <span className="font-medium text-[#423b3b]">
+                              {item.category}
+                            </span>
+                          </div>
+                          <span className="font-semibold text-[#1a1516]">
+                            Rs {Number(item.amount || 0).toLocaleString()}
+                          </span>
                         </div>
-                        <span className="font-semibold text-[#1a1516]">{amount}</span>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-xs text-[#9e9491]">
+                        No spending data available yet.
+                      </p>
+                    )}
                   </div>
                 </section>
 
