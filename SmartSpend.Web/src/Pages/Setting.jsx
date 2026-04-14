@@ -7,368 +7,434 @@ import { useNotifications } from "../context/NotificationContext";
 import "./Setting.css";
 
 function Setting() {
-	const apiBaseUrl = "https://localhost:5030";
-	const roleOptions = ["User", "Student", "Business"];
-	const navigate = useNavigate();
-	const { addNotification } = useNotifications();
-	const [form, setForm] = useState({ name: "", email: "", role: "User" });
-	const [initialForm, setInitialForm] = useState({ name: "", email: "", role: "User" });
-	const [firstLoginAt, setFirstLoginAt] = useState("");
-	const [profileImageUrl, setProfileImageUrl] = useState("");
-	const [loading, setLoading] = useState(true);
-	const [saving, setSaving] = useState(false);
-	const [uploadingImage, setUploadingImage] = useState(false);
-	const [error, setError] = useState("");
-	const [success, setSuccess] = useState("");
+  const apiBaseUrl = "https://localhost:5030";
+  const roleOptions = ["User", "Student", "Business"];
+  const navigate = useNavigate();
+  const { addNotification } = useNotifications();
+  const [form, setForm] = useState({ name: "", email: "", role: "User" });
+  const [initialForm, setInitialForm] = useState({ name: "", email: "", role: "User" });
+  const [firstLoginAt, setFirstLoginAt] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-	useEffect(() => {
-		const loadProfile = async () => {
-			const token = localStorage.getItem("token");
-			if (!token) {
-				navigate("/");
-				return;
-			}
+  useEffect(() => {
+    const loadProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/");
+        return;
+      }
 
-			try {
-				setLoading(true);
-				const response = await axios.get("https://localhost:5030/api/auth/profile", {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
+      try {
+        setLoading(true);
+        const response = await axios.get("https://localhost:5030/api/auth/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-				const data = response.data;
-				const profile = {
-					name: data?.name || "",
-					email: data?.email || "",
-					role: data?.role || "User",
-				};
+        const data = response.data;
+        const profile = {
+          name: data?.name || "",
+          email: data?.email || "",
+          role: data?.role || "User",
+        };
 
-				setForm(profile);
-				setInitialForm(profile);
-				setFirstLoginAt(data?.firstLoginAt || data?.createdAt || "");
-				setProfileImageUrl(data?.profileImageUrl || "");
-				localStorage.setItem("userName", profile.name || "User");
-				localStorage.setItem("userRole", profile.role || "User");
-				if (data?.profileImageUrl) {
-					localStorage.setItem("userImage", data.profileImageUrl);
-				}
-			} catch (loadError) {
-				const message = loadError.response?.data || "Unable to load your profile";
-				setError(message);
+        setForm(profile);
+        setInitialForm(profile);
+        setFirstLoginAt(data?.firstLoginAt || data?.createdAt || "");
+        setProfileImageUrl(data?.profileImageUrl || "");
+        localStorage.setItem("userName", profile.name || "User");
+        localStorage.setItem("userRole", profile.role || "User");
+        if (data?.profileImageUrl) {
+          localStorage.setItem("userImage", data.profileImageUrl);
+        }
+      } catch (loadError) {
+        const message = loadError.response?.data || "Unable to load your profile";
+        setError(message);
 
-				if (loadError.response?.status === 401) {
-					localStorage.removeItem("token");
-					localStorage.removeItem("userName");
-					navigate("/");
-				}
-			} finally {
-				setLoading(false);
-			}
-		};
+        if (loadError.response?.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userName");
+          navigate("/");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-		loadProfile();
-	}, [navigate]);
+    loadProfile();
+  }, [navigate]);
 
-	const hasChanges = useMemo(() => {
-		return (
-			form.name !== initialForm.name ||
-			form.email !== initialForm.email ||
-			form.role !== initialForm.role
-		);
-	}, [form, initialForm]);
+  const hasChanges = useMemo(() => {
+    return (
+      form.name !== initialForm.name ||
+      form.email !== initialForm.email ||
+      form.role !== initialForm.role
+    );
+  }, [form, initialForm]);
 
-	const resolvedImageUrl = useMemo(() => {
-		if (!profileImageUrl) {
-			return "https://ui-avatars.com/api/?name=User&background=E2E8F0&color=334155";
-		}
+  const resolvedImageUrl = useMemo(() => {
+    if (!profileImageUrl) {
+      return "https://ui-avatars.com/api/?name=User&background=E2E8F0&color=334155";
+    }
 
-		if (profileImageUrl.startsWith("/profile-images/")) {
-			const fileName = profileImageUrl.split("/").pop();
-			return `${apiBaseUrl}/api/auth/profile-image/${fileName}`;
-		}
+    if (profileImageUrl.startsWith("/profile-images/")) {
+      const fileName = profileImageUrl.split("/").pop();
+      return `${apiBaseUrl}/api/auth/profile-image/${fileName}`;
+    }
 
-		if (profileImageUrl.startsWith("http://") || profileImageUrl.startsWith("https://")) {
-			return profileImageUrl;
-		}
+    if (profileImageUrl.startsWith("http://") || profileImageUrl.startsWith("https://")) {
+      return profileImageUrl;
+    }
 
-		return `${apiBaseUrl}${profileImageUrl}`;
-	}, [apiBaseUrl, profileImageUrl]);
+    return `${apiBaseUrl}${profileImageUrl}`;
+  }, [apiBaseUrl, profileImageUrl]);
 
-	const handleInputChange = (event) => {
-		setError("");
-		setSuccess("");
-		setForm((previous) => ({
-			...previous,
-			[event.target.name]: event.target.value,
-		}));
-	};
+  const handleInputChange = (event) => {
+    setError("");
+    setSuccess("");
+    setForm((previous) => ({
+      ...previous,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
-	const handleSave = async (event) => {
-		event.preventDefault();
-		const token = localStorage.getItem("token");
-		if (!token) {
-			navigate("/");
-			return;
-		}
+  const handleSave = async (event) => {
+    event.preventDefault();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+      return;
+    }
 
-		if (!form.name.trim() || !form.email.trim()) {
-			setError("Name and email are required");
-			return;
-		}
+    if (!form.name.trim() || !form.email.trim()) {
+      setError("Name and email are required");
+      return;
+    }
 
-		try {
-			setSaving(true);
-			setError("");
-			setSuccess("");
+    try {
+      setSaving(true);
+      setError("");
+      setSuccess("");
 
-			const response = await axios.put(
-				"https://localhost:5030/api/auth/profile",
-				{
-					name: form.name.trim(),
-					email: form.email.trim(),
-					role: form.role,
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+      const response = await axios.put(
+        "https://localhost:5030/api/auth/profile",
+        {
+          name: form.name.trim(),
+          email: form.email.trim(),
+          role: form.role,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-			const nextToken = response.data?.token;
-			if (nextToken) {
-				localStorage.setItem("token", nextToken);
-			}
+      const nextToken = response.data?.token;
+      if (nextToken) {
+        localStorage.setItem("token", nextToken);
+      }
 
-			const updatedName = response.data?.user?.name || form.name.trim();
-			localStorage.setItem("userName", updatedName);
+      const updatedName = response.data?.user?.name || form.name.trim();
+      localStorage.setItem("userName", updatedName);
 
-			const updatedForm = {
-				name: updatedName,
-				email: response.data?.user?.email || form.email.trim(),
-				role: response.data?.user?.role || form.role,
-			};
+      const updatedForm = {
+        name: updatedName,
+        email: response.data?.user?.email || form.email.trim(),
+        role: response.data?.user?.role || form.role,
+      };
 
-			setForm(updatedForm);
-			setInitialForm(updatedForm);
-			localStorage.setItem("userRole", updatedForm.role);
-			const successMessage = response.data?.message || "Profile updated successfully";
-			setSuccess(successMessage);
-			addNotification({
-				title: "Profile updated",
-				message: "Your name, email, or role details were updated successfully.",
-				type: "success",
-			});
-		} catch (saveError) {
-			const message = saveError.response?.data || "Unable to save profile changes";
-			setError(message);
-		} finally {
-			setSaving(false);
-		}
-	};
+      setForm(updatedForm);
+      setInitialForm(updatedForm);
+      localStorage.setItem("userRole", updatedForm.role);
+      const successMessage = response.data?.message || "Profile updated successfully";
+      setSuccess(successMessage);
+      addNotification({
+        title: "Profile updated",
+        message: "Your name, email, or role details were updated successfully.",
+        type: "success",
+      });
+    } catch (saveError) {
+      const message = saveError.response?.data || "Unable to save profile changes";
+      setError(message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
-	const handleImageUpload = async (event) => {
-		const file = event.target.files?.[0];
-		if (!file) {
-			return;
-		}
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
 
-		const token = localStorage.getItem("token");
-		if (!token) {
-			navigate("/");
-			return;
-		}
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+      return;
+    }
 
-		try {
-			setUploadingImage(true);
-			setError("");
-			setSuccess("");
+    try {
+      setUploadingImage(true);
+      setError("");
+      setSuccess("");
 
-			const formData = new FormData();
-			formData.append("image", file);
+      const formData = new FormData();
+      formData.append("image", file);
 
-			const response = await axios.post("https://localhost:5030/api/auth/profile-image", formData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "multipart/form-data",
-				},
-			});
+      const response = await axios.post("https://localhost:5030/api/auth/profile-image", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-			const nextImage = response.data?.profileImageUrl || "";
-			setProfileImageUrl(nextImage);
-			if (nextImage) {
-				localStorage.setItem("userImage", nextImage);
-			}
+      const nextImage = response.data?.profileImageUrl || "";
+      setProfileImageUrl(nextImage);
+      if (nextImage) {
+        localStorage.setItem("userImage", nextImage);
+      }
 
-			const successMessage = response.data?.message || "Profile image uploaded successfully";
-			setSuccess(successMessage);
-			addNotification({
-				title: "Profile photo updated",
-				message: "Your display picture has been updated successfully.",
-				type: "success",
-			});
-		} catch (uploadError) {
-			const message = uploadError.response?.data || "Unable to upload profile image";
-			setError(message);
-		} finally {
-			setUploadingImage(false);
-			event.target.value = "";
-		}
-	};
+      const successMessage = response.data?.message || "Profile image uploaded successfully";
+      setSuccess(successMessage);
+      addNotification({
+        title: "Profile photo updated",
+        message: "Your display picture has been updated successfully.",
+        type: "success",
+      });
+    } catch (uploadError) {
+      const message = uploadError.response?.data || "Unable to upload profile image";
+      setError(message);
+    } finally {
+      setUploadingImage(false);
+      event.target.value = "";
+    }
+  };
 
-	const memberSince = firstLoginAt
-		? new Date(firstLoginAt).toLocaleDateString("en-IN", {
-				year: "numeric",
-				month: "short",
-				day: "numeric",
-			})
-		: "-";
+  const memberSince = firstLoginAt
+    ? new Date(firstLoginAt).toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : "-";
 
-	return (
-		<div className="settings-page flex h-screen bg-[#f5f7fb]">
-			<Sidebar />
+  return (
+    <div className="settings-page flex h-screen overflow-hidden bg-[#171214]">
+      <Sidebar />
 
-			<div className="flex-1 flex flex-col">
-				<Navbar />
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[#f6f1ee]">
+        <div className="shrink-0">
+          <Navbar />
+        </div>
 
-				<div className="settings-content p-6 bg-[#f5f7fb] min-h-screen overflow-y-auto">
-					<div className="max-w-3xl mx-auto">
-						<div className="settings-profile-head mb-6">
-							<img src={resolvedImageUrl} alt="Profile" className="settings-profile-avatar" />
-							<div>
-								<h3 className="settings-profile-name">{form.name || "User"}</h3>
-								<p className="settings-profile-sub">Manage your profile photo and personal details</p>
-								<label className="settings-upload-btn mt-3 inline-flex cursor-pointer">
-									<input
-										type="file"
-										accept="image/png,image/jpeg,image/jpg,image/webp"
-										onChange={handleImageUpload}
-										className="hidden"
-									/>
-									{uploadingImage ? "Uploading..." : "Upload Profile Image"}
-								</label>
-							</div>
-						</div>
+        <div className="settings-content flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-6">
+          <div className="mx-auto max-w-7xl">
+            <div className="settings-hero mb-6">
+              <div>
+                <p className="settings-kicker">Control Room</p>
+                <h1 className="mt-2 text-3xl font-black tracking-tight text-[#1a1516] md:text-5xl">
+                  Account Settings
+                </h1>
+                <p className="mt-3 max-w-2xl text-sm font-medium text-[#7f7471]">
+                  Keep your profile, role, and SmartSpend identity tuned for every budget decision.
+                </p>
+              </div>
 
-						<div className="settings-meta-grid mb-6">
-							<div className="settings-meta-card">
-								<p className="settings-meta-label">Account Type</p>
-								<p className="settings-meta-value">{form.role}</p>
-							</div>
-							<div className="settings-meta-card">
-								<p className="settings-meta-label">Member Since</p>
-								<p className="settings-meta-value">{memberSince}</p>
-							</div>
-							<div className="settings-meta-card">
-								<p className="settings-meta-label">Profile Status</p>
-								<p className="settings-meta-value">Active</p>
-							</div>
-						</div>
+              <div className="settings-hero-badge">
+                <span>Profile</span>
+                <strong>{hasChanges ? "Unsaved edits" : "All synced"}</strong>
+              </div>
+            </div>
 
-						<div className="settings-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-							<div className="mb-6 settings-card-head">
-								<h2 className="text-2xl font-bold text-gray-800">Account Settings</h2>
-								<p className="text-sm text-gray-500 mt-1">
-									Update your personal details used across SmartSpend.
-								</p>
-							</div>
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+              <aside className="space-y-6">
+                <section className="settings-profile-panel">
+                  <div className="settings-profile-cover">
+                    <div className="settings-profile-orbit">
+                      <img src={resolvedImageUrl} alt="Profile" className="settings-profile-avatar" />
+                    </div>
+                  </div>
 
-							{loading ? (
-								<div className="text-sm text-gray-500 py-10">Loading your profile...</div>
-							) : (
-								<form onSubmit={handleSave} className="space-y-5">
-									{error && (
-										<div className="settings-alert error rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-											{error}
-										</div>
-									)}
+                  <div className="settings-profile-body">
+                    <p className="settings-kicker text-[#d84843]">Signed in as</p>
+                    <h2 className="settings-profile-name">{form.name || "User"}</h2>
+                    <p className="settings-profile-sub">
+                      {form.email || "Your SmartSpend profile"}
+                    </p>
 
-									{success && (
-										<div className="settings-alert success rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-											{success}
-										</div>
-									)}
+                    <label className="settings-upload-btn mt-5 inline-flex cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                      {uploadingImage ? "Uploading..." : "Upload Profile Image"}
+                    </label>
+                  </div>
+                </section>
 
-									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-										<div>
-											<label className="settings-label block text-sm font-medium text-gray-700 mb-2" htmlFor="name">
-												Full Name
-											</label>
-											<input
-												id="name"
-												name="name"
-												type="text"
-												value={form.name}
-												onChange={handleInputChange}
-												className="settings-input w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-400"
-												placeholder="Enter your name"
-												required
-											/>
-										</div>
+                <section className="settings-mini-panel">
+                  <p className="settings-kicker">Profile Score</p>
+                  <div className="settings-score-ring">
+                    <div>
+                      <strong>{form.name && form.email ? "100%" : "60%"}</strong>
+                      <span>Ready</span>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm font-medium text-[#7f7471]">
+                    Your profile powers personalized dashboard labels and budget context.
+                  </p>
+                </section>
+              </aside>
 
-										<div>
-											<label className="settings-label block text-sm font-medium text-gray-700 mb-2" htmlFor="email">
-												Email Address
-											</label>
-											<input
-												id="email"
-												name="email"
-												type="email"
-												value={form.email}
-												onChange={handleInputChange}
-												className="settings-input w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-400"
-												placeholder="Enter your email"
-												required
-											/>
-										</div>
-									</div>
+              <main className="space-y-6">
+                <div className="settings-meta-grid">
+                  <div className="settings-meta-card accent">
+                    <p className="settings-meta-label">Account Type</p>
+                    <p className="settings-meta-value">{form.role}</p>
+                    <span>SmartSpend access</span>
+                  </div>
+                  <div className="settings-meta-card">
+                    <p className="settings-meta-label">Member Since</p>
+                    <p className="settings-meta-value">{memberSince}</p>
+                    <span>First login date</span>
+                  </div>
+                  <div className="settings-meta-card">
+                    <p className="settings-meta-label">Profile Status</p>
+                    <p className="settings-meta-value">Active</p>
+                    <span>Ready to budget</span>
+                  </div>
+                </div>
 
-									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-										<div>
-											<label className="settings-label block text-sm font-medium text-gray-700 mb-2">Role</label>
-											<select
-												name="role"
-												value={form.role}
-												onChange={handleInputChange}
-												className="settings-input w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
-											>
-												{roleOptions.map((option) => (
-													<option key={option} value={option}>
-														{option}
-													</option>
-												))}
-											</select>
-										</div>
+                <section className="settings-card bg-white p-6 sm:p-8">
+                  <div className="mb-6 settings-card-head">
+                    <div>
+                      <p className="settings-kicker">Personal Details</p>
+                      <h2 className="mt-2 text-3xl font-bold tracking-tight text-[#1a1516]">
+                        Profile Console
+                      </h2>
+                    </div>
+                    <span className={`settings-state-pill ${hasChanges ? "pending" : ""}`}>
+                      {hasChanges ? "Needs save" : "Synced"}
+                    </span>
+                  </div>
 
-										<div>
-											<label className="settings-label block text-sm font-medium text-gray-700 mb-2">Member Since</label>
-											<input
-												type="text"
-												value={memberSince}
-												readOnly
-												className="settings-input muted w-full rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5 text-sm text-gray-500"
-											/>
-										</div>
-									</div>
+                  {loading ? (
+                    <div className="settings-loading">
+                      <div className="settings-loading-mark" />
+                      <p>Loading your profile...</p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSave} className="space-y-5">
+                      {error && (
+                        <div className="settings-alert error rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                          {error}
+                        </div>
+                      )}
 
-									<div className="pt-2 flex justify-end">
-										<button
-											type="submit"
-											disabled={!hasChanges || saving}
-											className="settings-save-btn px-5 py-2.5 rounded-lg bg-green-500 text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-600 transition-colors"
-										>
-											{saving ? "Saving..." : "Save Changes"}
-										</button>
-									</div>
-								</form>
-							)}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+                      {success && (
+                        <div className="settings-alert success rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                          {success}
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="settings-field">
+                          <label className="settings-label mb-2 block text-sm font-medium" htmlFor="name">
+                            Full Name
+                          </label>
+                          <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            value={form.name}
+                            onChange={handleInputChange}
+                            className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none"
+                            placeholder="Enter your name"
+                            required
+                          />
+                        </div>
+
+                        <div className="settings-field">
+                          <label className="settings-label mb-2 block text-sm font-medium" htmlFor="email">
+                            Email Address
+                          </label>
+                          <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={form.email}
+                            onChange={handleInputChange}
+                            className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none"
+                            placeholder="Enter your email"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="settings-field">
+                          <label className="settings-label mb-2 block text-sm font-medium">Role</label>
+                          <select
+                            name="role"
+                            value={form.role}
+                            onChange={handleInputChange}
+                            className="settings-input w-full rounded-lg border px-3 py-2.5 text-sm"
+                          >
+                            {roleOptions.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="settings-field">
+                          <label className="settings-label mb-2 block text-sm font-medium">Member Since</label>
+                          <input
+                            type="text"
+                            value={memberSince}
+                            readOnly
+                            className="settings-input muted w-full rounded-lg border px-3 py-2.5 text-sm"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="settings-save-row">
+                        <div>
+                          <p className="text-sm font-bold text-[#1a1516]">
+                            {hasChanges ? "Review your edits before saving." : "No profile edits waiting."}
+                          </p>
+                          <p className="mt-1 text-xs font-medium text-[#9d9390]">
+                            Changes update your SmartSpend session instantly.
+                          </p>
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={!hasChanges || saving}
+                          className="settings-save-btn rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {saving ? "Saving..." : "Save Changes"}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </section>
+              </main>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Setting;
