@@ -38,12 +38,6 @@ var authenticationBuilder = builder.Services
         var jwtSettings = builder.Configuration.GetSection("JwtSettings");
         var secretKey = jwtSettings["Secret"];
 
-        if (string.IsNullOrWhiteSpace(secretKey) || secretKey == "SET_THIS_VIA_DOTNET_USER_SECRETS")
-        {
-            // Dev-friendly fallback to avoid crashing Swagger/startup when secrets aren't loaded.
-            secretKey = "DEV_ONLY_CHANGE_ME_please_set_JwtSettings_Secret";
-        }
-
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,

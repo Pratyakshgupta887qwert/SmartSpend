@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useNotifications } from "../context/NotificationContext";
 
 function AddExpense() {
+  const navigate = useNavigate();
   const { addNotification } = useNotifications();
 
   const [previewImage, setPreviewImage] = useState(null);
@@ -31,21 +33,89 @@ function AddExpense() {
     }
   };
 
-  const handleSave = () => {
-    if (!previewImage) {
-      addNotification({
-        title: "No receipt uploaded",
-        message: "Please upload a receipt image before saving.",
-        type: "warning",
-      });
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:5030";
+
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      addNotification({ title: "Error", message: "Please log in first", type: "warning" });
       return;
     }
 
-    addNotification({
-      title: "Receipt uploaded successfully",
-      message: "Your receipt has been saved and is now available for expense tracking.",
-      type: "success",
-    });
+    let payload = {};
+
+    if (isManual) {
+      if (!manualAmount || !manualCategory) {
+        addNotification({ title: "Error", message: "Amount and Category are required", type: "warning" });
+        return;
+      }
+      payload = {
+        amount: Number(manualAmount),
+        categoryName: manualCategory.trim(),
+        description: manualDescription,
+        spentAt: manualDate ? new Date(manualDate).toISOString() : new Date().toISOString()
+      };
+    } else {
+      if (!previewImage) {
+        addNotification({
+          title: "No receipt uploaded",
+          message: "Please upload a receipt image before saving.",
+          type: "warning",
+        });
+        return;
+      }
+      payload = {
+        amount: 540, // Mock amount for receipt upload since UI has no field
+        categoryName: uploadCategory.trim() || "Food & Dining",
+        description: uploadDescription,
+        spentAt: new Date().toISOString()
+      };
+    }
+
+    try {
+      console.log("Sending expense to backend:", payload);
+      const response = await fetch(`${API_BASE}/api/expenses`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save expense. Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Expense saved successfully:", data);
+
+      addNotification({
+        title: "Expense added successfully",
+        message: "Your expense has been saved and is now available for tracking.",
+        type: "success",
+      });
+
+      // Clear form
+      if (isManual) {
+        setManualAmount("0");
+        setManualDescription("");
+        setManualCategory("");
+        setManualDate("");
+        setTimeout(() => navigate("/dashboard"), 100);
+      } else {
+        setPreviewImage(null);
+        setUploadDescription("Dinner at an Italian restaurant");
+        setUploadCategory("");
+      }
+    } catch (error) {
+      console.error("Error saving expense:", error);
+      addNotification({
+        title: "Error saving expense",
+        message: error.message,
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -248,7 +318,8 @@ function AddExpense() {
                             onChange={(e) => setManualCategory(e.target.value)}
                             className="w-full rounded-lg border border-[#cfc4c0] bg-[#faf7f5] px-4 py-3 text-lg text-[#57504f] outline-none transition focus:border-[#d84843] focus:ring-4 focus:ring-[#d84843]/10"
                           >
-                            <option value="Food & Dining ">Food & Dining🍔</option>
+                            <option value="">Select Category</option>
+                            <option value="Food & Dining">Food & Dining🍔</option>
                             <option value="HealthCare">HealthCare🏥</option>
                             <option value="Travel & Trips">Travel & Trips 🚞</option>
                             <option value="Personal Care">Personal Care 💅🏻</option>
