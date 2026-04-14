@@ -117,6 +117,25 @@ namespace SmartSpend.Backend.Controllers
             return Ok(recent);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteExpense(int id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out var userId))
+                return Unauthorized("Invalid token");
+
+            var expense = await _context.Expenses
+                .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
+
+            if (expense == null)
+                return NotFound("Expense not found");
+
+            _context.Expenses.Remove(expense);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Expense deleted successfully" });
+        }
+
         [HttpGet("summary")]
         public async Task<IActionResult> GetSummary([FromQuery] int? month, [FromQuery] int? year)
         {

@@ -74,14 +74,118 @@ function Pulse() {
     });
   };
 
-  const togglePaid = (id) => {
-    const next = bills.map((bill) =>
-      bill.id === id ? { ...bill, paid: !bill.paid } : bill
-    );
-    persistBills(next);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:5030";
+
+  const togglePaid = async (id) => {
+    const billToUpdate = bills.find((b) => b.id === id);
+    if (!billToUpdate) return;
+
+    if (!billToUpdate.paid) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        addNotification({ title: "Error", message: "Please log in first", type: "warning" });
+        return;
+      }
+
+      try {
+        const payload = {
+          amount: Number(billToUpdate.amount),
+          categoryName: billToUpdate.category || "Utilities",
+          description: billToUpdate.title || "Bill Payment",
+          spentAt: new Date().toISOString()
+        };
+
+        const response = await fetch(`${API_BASE}/api/expenses`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to save to expenses. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        addNotification({
+          title: "Paid & Tracked!",
+          message: `${billToUpdate.title} was marked as paid and added to your dashboard expenses!`,
+          type: "success",
+        });
+
+        const next = bills.map((bill) =>
+          bill.id === id ? { ...bill, paid: true, expenseId: data.id || data.Id || data.id } : bill
+        );
+        persistBills(next);
+
+      } catch (error) {
+        console.error("Error saving bill as expense:", error);
+        addNotification({
+          title: "Error tracking bill",
+          message: error.message,
+          type: "error",
+        });
+        return; // Prevent marking as paid if backend fails
+      }
+    } else {
+      // Logic for toggling from Paid -> Unpaid
+      if (billToUpdate.expenseId) {
+        const token = localStorage.getItem("token");
+        try {
+          const response = await fetch(`${API_BASE}/api/expenses/${billToUpdate.expenseId}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          if (!response.ok) {
+            console.error("Failed to untrack expense from backend");
+          } else {
+            addNotification({
+              title: "Untracked",
+              message: `${billToUpdate.title} was marked unpaid and removed from dashboard.`,
+              type: "success",
+            });
+          }
+        } catch (error) {
+          console.error("Error deleting tracking expense:", error);
+        }
+      }
+
+      const next = bills.map((bill) =>
+        bill.id === id ? { ...bill, paid: false, expenseId: null } : bill
+      );
+      persistBills(next);
+    }
   };
 
-  const removeBill = (id) => {
+  const removeBill = async (id) => {
+    const billToRemove = bills.find((b) => b.id === id);
+    if (!billToRemove) return;
+
+    if (billToRemove.paid && billToRemove.expenseId) {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(`${API_BASE}/api/expenses/${billToRemove.expenseId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) {
+          console.error("Failed to delete backend expense for the removed bill");
+        } else {
+            addNotification({
+              title: "Untracked",
+              message: `${billToRemove.title} was removed completely from expenses.`,
+              type: "success",
+            });
+        }
+      } catch (error) {
+        console.error("Error deleting tracking expense:", error);
+      }
+    }
+
     const next = bills.filter((bill) => bill.id !== id);
     persistBills(next);
   };

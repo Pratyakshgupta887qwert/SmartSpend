@@ -4,12 +4,15 @@ import Navbar from "../components/Navbar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import ExpenseChart from "../components/ExpenseChart";
+import { Trash2 } from "lucide-react";
+import { useNotifications } from "../context/NotificationContext";
 
 import SpendingPieChart from "../components/SpendingPieChart";
 
 function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { addNotification } = useNotifications();
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [incomeInput, setIncomeInput] = useState(0);
   const [summary, setSummary] = useState(null);
@@ -18,8 +21,27 @@ function Dashboard() {
   const [pieData, setPieData] = useState([]);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [graphData, setGraphData] = useState([]);
+  const [upcomingBills, setUpcomingBills] = useState([]);
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:5030";
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("smartspend_upcoming_bills");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          const sorted = parsed
+            .filter((b) => !b.paid)
+            .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+            .slice(0, 4);
+          setUpcomingBills(sorted);
+        }
+      }
+    } catch {
+      // Ignore parse errors safely
+    }
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -163,6 +185,36 @@ function Dashboard() {
     };
 
     saveBudget();
+  };
+
+  const handleRemoveExpense = async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/expenses/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (!res.ok) throw new Error("Failed to delete expense");
+
+      addNotification({
+        title: "Expense Removed",
+        message: "The transaction has been successfully deleted.",
+        type: "success",
+      });
+
+      // Refetch everything right away to update the UI globally
+      fetchDashboardData();
+    } catch (error) {
+      console.error(error);
+      addNotification({
+        title: "Error",
+        message: "Could not remove expense.",
+        type: "error",
+      });
+    }
   };
 
   const pieChartData = pieData.length > 0
@@ -328,9 +380,18 @@ function Dashboard() {
                               {new Date(txn.spentAt).toLocaleDateString()}
                             </p>
                           </div>
-                          <span className="text-sm font-bold text-[#d84843]">
-                            - Rs {Number(txn.amount).toLocaleString()}
-                          </span>
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm font-bold text-[#d84843]">
+                              - Rs {Number(txn.amount).toLocaleString()}
+                            </span>
+                            <button
+                              onClick={() => handleRemoveExpense(txn.id)}
+                              className="text-[#b0a5a1] hover:text-[#d84843] transition-colors"
+                              title="Delete Transaction"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -454,19 +515,37 @@ function Dashboard() {
                     </button>
                   </div>
 
-                  <div className="flex min-h-[220px] items-center justify-center rounded-[24px] border border-dashed border-[#e7deda] bg-[#fcfaf9] px-6 text-center">
-                    <div>
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f3ece8] text-xl text-[#b0a5a1]">
-                        +
-                      </div>
-                      <p className="mt-4 text-lg font-semibold text-[#1a1516]">
-                        No upcoming bills yet
-                      </p>
-                      <p className="mt-2 text-sm leading-6 text-[#938987]">
-                        Upcoming bills will populate here after backend integration is added.
-                      </p>
+                  {upcomingBills.length > 0 ? (
+                    <div className="space-y-3">
+                      {upcomingBills.map((bill) => (
+                        <div key={bill.id} className="flex items-center justify-between rounded-[20px] border border-[#efe7e3] bg-[#faf7f5] px-4 py-3">
+                          <div>
+                            <p className="text-sm font-semibold text-[#1a1516]">{bill.title}</p>
+                            <p className="mt-0.5 text-xs text-[#9e9491]">
+                              Due {new Date(bill.dueDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <span className="text-sm font-bold text-[#1a1516]">
+                            Rs {Number(bill.amount).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex min-h-[220px] items-center justify-center rounded-[24px] border border-dashed border-[#e7deda] bg-[#fcfaf9] px-6 text-center">
+                      <div>
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f3ece8] text-xl text-[#b0a5a1]">
+                          +
+                        </div>
+                        <p className="mt-4 text-lg font-semibold text-[#1a1516]">
+                          No upcoming bills yet
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-[#938987]">
+                          Go to the Pulse page to manually add your first upcoming bill.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </section>
               </div>
             </div>
