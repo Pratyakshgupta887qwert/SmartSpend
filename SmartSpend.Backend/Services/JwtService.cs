@@ -9,9 +9,11 @@ namespace SmartSpend.Backend.Services{
     public class JwtService
     {
         private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _environment;
 
-        public JwtService(IConfiguration config){
+        public JwtService(IConfiguration config, IWebHostEnvironment environment){
             _config=config;
+            _environment=environment;
         }
 
         public string GenerateToken(User user){
@@ -22,12 +24,7 @@ namespace SmartSpend.Backend.Services{
             new Claim(ClaimTypes.Role,user.Role ?? "User"),
             new Claim("name", user.Name)
             };
-        var secret = _config["JwtSettings:Secret"];
-
-if (string.IsNullOrEmpty(secret))
-{
-    throw new Exception("JWT Secret is missing in configuration");
-}
+        var secret = JwtConfiguration.GetSecret(_config, _environment);
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(secret)
         );
