@@ -15,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddHttpClient<IGeminiReceiptOcrService, GeminiReceiptOcrService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -36,7 +37,8 @@ var authenticationBuilder = builder.Services
     .AddJwtBearer(options =>
     {
         var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-        var secretKey = jwtSettings["Secret"];
+        // Use the same secret resolution as JwtService so signing & validation always match
+        var secretKey = JwtConfiguration.GetSecret(builder.Configuration, builder.Environment);
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
