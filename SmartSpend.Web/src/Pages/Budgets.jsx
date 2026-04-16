@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 function Budgets() {
+  const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
   const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -101,10 +103,16 @@ function Budgets() {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <button className="rounded-2xl bg-[#f5efeb] px-5 py-3 text-sm font-semibold text-[#5f5654] shadow-sm ring-1 ring-black/5 transition hover:bg-[#efe6e1]">
+                <button 
+                  onClick={() => alert("Report generation will be available soon.")} 
+                  className="rounded-2xl bg-[#f5efeb] px-5 py-3 text-sm font-semibold text-[#5f5654] shadow-sm ring-1 ring-black/5 transition hover:bg-[#efe6e1]"
+                >
                   Export Report
                 </button>
-                <button className="rounded-2xl bg-[#d84843] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_-18px_rgba(216,72,67,0.95)] transition hover:bg-[#cc3f3b]">
+                <button 
+                  onClick={() => navigate("/dashboard")} 
+                  className="rounded-2xl bg-[#d84843] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_-18px_rgba(216,72,67,0.95)] transition hover:bg-[#cc3f3b]"
+                >
                   Adjust Budget
                 </button>
               </div>

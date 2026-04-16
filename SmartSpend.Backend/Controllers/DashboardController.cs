@@ -39,16 +39,14 @@ namespace SmartSpend.Backend.Controllers
 
             var budgetAmount = await _context.Budgets
                 .AsNoTracking()
-                .Where(budget => budget.UserId == userId && budget.MonthStart == monthStart)
+                .Where(budget => budget.UserId == userId)
+                .OrderByDescending(b => b.MonthStart)
                 .Select(budget => budget.AmountSet)
                 .FirstOrDefaultAsync();
 
             var expensesInMonth = _context.Expenses
                 .AsNoTracking()
-                .Where(expense =>
-                    expense.UserId == userId &&
-                    expense.SpentAt >= monthStart &&
-                    expense.SpentAt < nextMonthStart);
+                .Where(expense => expense.UserId == userId);
 
             var totalSpent = await expensesInMonth
                 .Select(expense => (decimal?)expense.Amount)
@@ -108,16 +106,14 @@ namespace SmartSpend.Backend.Controllers
 
             var income = await _context.Budgets
                 .AsNoTracking()
-                .Where(budget => budget.UserId == userId && budget.MonthStart == monthStart)
+                .Where(budget => budget.UserId == userId)
+                .OrderByDescending(b => b.MonthStart)
                 .Select(budget => budget.AmountSet)
                 .FirstOrDefaultAsync();
 
             var totalExpense = await _context.Expenses
                 .AsNoTracking()
-                .Where(expense =>
-                    expense.UserId == userId &&
-                    expense.SpentAt >= monthStart &&
-                    expense.SpentAt < nextMonthStart)
+                .Where(expense => expense.UserId == userId)
                 .Select(expense => (decimal?)expense.Amount)
                 .SumAsync() ?? 0m;
 
@@ -178,10 +174,7 @@ namespace SmartSpend.Backend.Controllers
 
             var items = await _context.Expenses
                 .AsNoTracking()
-                .Where(expense =>
-                    expense.UserId == userId &&
-                    expense.SpentAt >= monthStart &&
-                    expense.SpentAt < nextMonthStart)
+                .Where(expense => expense.UserId == userId)
                 .GroupBy(expense => expense.Category.Name)
                 .Select(group => new CategoryBreakdownDto
                 {

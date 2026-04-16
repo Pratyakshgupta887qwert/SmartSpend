@@ -30,6 +30,8 @@ function Sidebar() {
     "text-white/70 hover:bg-white/10 hover:text-white";
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
     navigate("/");
   };
 
