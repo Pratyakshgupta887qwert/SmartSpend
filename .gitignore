@@ -11,8 +11,8 @@ node_modules/
 # Logs
 *.log
 
-# # Local development config
-# appsettings.Development.json
+# Local development config (contains secrets — never commit!)
+appsettings.Development.json
 
 # # appsettings.json inside the backend project
 # SmartSpend.Backend/appsettings.json
