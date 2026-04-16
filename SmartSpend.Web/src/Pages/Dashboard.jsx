@@ -14,10 +14,10 @@ function Dashboard() {
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
   const [monthlyIncome, setMonthlyIncome] = useState(0);
-  const [incomeInput, setIncomeInput] = useState(0);
+  const [incomeInput, setIncomeInput] = useState("");
   const [summary, setSummary] = useState(null);
   const [summaryError, setSummaryError] = useState("");
-  const [dashboardData, setDashboardData] = useState(null);
+// dashboardData state removed to fix unused variable warning
   const [pieData, setPieData] = useState([]);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [graphData, setGraphData] = useState([]);
@@ -79,7 +79,7 @@ function Dashboard() {
       if (!overviewRes.ok) throw new Error("Unable to load dashboard overview");
       const overviewData = await overviewRes.json();
       console.log("[Dashboard] overview:", overviewData);
-      setDashboardData(overviewData);
+      // setDashboardData removed
       setMonthlyIncome(Number(overviewData.income || 0));
 
       // 2. GET /api/Dashboard/category-breakdown
@@ -131,6 +131,7 @@ function Dashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [API_BASE]);
 
   const chartData = (() => {
@@ -141,7 +142,8 @@ function Dashboard() {
 
     return displayLabels.map((label, index) => {
       const monthNumber = index + 1;
-      const monthData = graphData.find(g => g.month === monthNumber);
+      const currentYear = new Date().getFullYear();
+      const monthData = graphData.find(g => g.month === monthNumber && g.year === currentYear);
 
       return {
         day: label,
@@ -179,7 +181,7 @@ function Dashboard() {
 
         setMonthlyIncome(amount);
         await fetchDashboardData();
-      } catch (error) {
+      } catch {
         setSummaryError("Unable to save budget");
       }
     };
@@ -467,7 +469,7 @@ function Dashboard() {
                     <div className="rounded-[22px] bg-white px-5 py-5 shadow-sm ring-1 ring-[#e3efe8]">
                       <p className="font-semibold text-[#1a1516]">Hi John Doe!</p>
                       <p className="mt-2 text-sm leading-6 text-[#4f5f57]">
-                        How can i assist you today?
+                        How can I assist you today?
                       </p>
                     </div>
 
